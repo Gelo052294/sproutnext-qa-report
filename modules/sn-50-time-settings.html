@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SN-50 QA Test Report -- 2026-06-02</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #1a1d21; --ink-dim: #5b6470; --line: #e3e6ea;
+    --pass: #16a34a; --pass-bg: #dcfce7;
+    --fail: #dc2626; --fail-bg: #fee2e2;
+    --partial: #d97706; --partial-bg: #fef3c7;
+    --blocked: #6b7280; --blocked-bg: #f3f4f6;
+    --deferred: #4338ca; --deferred-bg: #e0e7ff;
+    --skipped: #94a3b8; --skipped-bg: #f1f5f9;
+    --info: #2563eb; --info-bg: #dbeafe;
+    --p1: #b91c1c; --p2: #c2410c; --p3: #6b7280;
+    --warn: #92400e; --warn-bg: #fef3c7;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+  header { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; padding: 28px 36px; }
+  header h1 { margin: 0 0 6px 0; font-size: 24px; }
+  header .meta { color: #cbd5e1; font-size: 14px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+  section.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 22px 26px; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+  section.card h2 { margin: 0 0 14px 0; font-size: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  section.card h3 { margin: 18px 0 8px 0; font-size: 15px; color: var(--ink); }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .stat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .stat-tile .label { font-size: 12px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-tile .value { font-size: 26px; font-weight: 700; margin-top: 4px; }
+  .stat-tile.pass .value { color: var(--pass); }
+  .stat-tile.fail .value { color: var(--fail); }
+  .stat-tile.partial .value { color: var(--partial); }
+  .stat-tile.blocked .value { color: var(--blocked); }
+  .stat-tile.deferred .value { color: var(--deferred); }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .badge.pass { background: var(--pass-bg); color: var(--pass); }
+  .badge.fail { background: var(--fail-bg); color: var(--fail); }
+  .badge.partial { background: var(--partial-bg); color: var(--partial); }
+  .badge.blocked { background: var(--blocked-bg); color: var(--blocked); }
+  .badge.info { background: var(--info-bg); color: var(--info); }
+  .pri { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #fff; }
+  .pri.p1 { background: var(--p1); }
+  .pri.p2 { background: var(--p2); }
+  .pri.p3 { background: var(--p3); }
+  .alert-banner { border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 12px; align-items: flex-start; font-size: 14px; }
+  .alert-banner.warn { background: var(--warn-bg); border-left: 4px solid var(--warn); color: var(--warn); }
+  .alert-banner.fail { background: var(--fail-bg); border-left: 4px solid var(--fail); color: #7f1d1d; }
+  .alert-banner.blocked { background: var(--blocked-bg); border-left: 4px solid var(--blocked); color: #374151; }
+  .alert-banner .icon { font-size: 18px; line-height: 1; }
+  .alert-banner .body { flex: 1; }
+  .alert-banner strong { display: block; margin-bottom: 4px; }
+  details.tc { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; overflow: hidden; background: #fff; }
+  details.tc summary { padding: 11px 16px; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 12px; background: #fafbfc; }
+  details.tc summary::-webkit-details-marker { display: none; }
+  details.tc summary::before { content: '\25B8'; color: var(--ink-dim); font-size: 12px; transition: transform 0.15s; }
+  details.tc[open] summary::before { transform: rotate(90deg); }
+  details.tc summary .tc-id { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--ink-dim); min-width: 90px; font-size: 13px; }
+  details.tc summary .tc-title { flex: 1; font-weight: 500; font-size: 14px; }
+  details.tc .body { padding: 14px 18px 16px 18px; border-top: 1px solid var(--line); font-size: 14px; }
+  details.tc .body p { margin: 4px 0; }
+  details.tc .body code { background: #f1f3f5; padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+  .tc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tc-table th { background: #f8f9fa; text-align: left; padding: 8px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-dim); border-bottom: 2px solid var(--line); }
+  .tc-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .tc-table tr:last-child td { border-bottom: none; }
+  .tc-table tr:hover td { background: #fafbfc; }
+  .tc-table td:first-child { font-family: ui-monospace, "SF Mono", Menlo, monospace; white-space: nowrap; }
+  .defect-list { display: flex; flex-direction: column; gap: 16px; }
+  .defect { border: 1px solid var(--line); border-left: 4px solid var(--p2); background: #fff; border-radius: 8px; padding: 16px 18px; }
+  .defect.p1 { border-left-color: var(--p1); background: #fefcfc; }
+  .defect.p2 { border-left-color: var(--p2); background: #fffaf6; }
+  .defect.p3 { border-left-color: var(--p3); background: #fafbfc; }
+  .defect-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .defect-head h3 { margin: 0; font-size: 16px; flex: 1; min-width: 0; }
+  .defect-key { background: #1a1d21; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; user-select: all; }
+  .defect p { font-size: 14px; margin: 6px 0; }
+  .defect h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-dim); margin: 12px 0 4px 0; }
+  .defect-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; }
+  @media (max-width: 700px) { .defect-cols { grid-template-columns: 1fr; } }
+  .defect-fig { margin: 12px 0 0 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #fafafa; }
+  .defect-fig img { width: 100%; display: block; cursor: zoom-in; }
+  .defect-fig figcaption { padding: 6px 10px; font-size: 12px; color: var(--ink-dim); background: #fff; border-top: 1px solid var(--line); }
+  .readiness-item { border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; background: #fff; }
+  .readiness-item h4 { margin: 0 0 6px 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .readiness-item p { margin: 4px 0; font-size: 14px; color: var(--ink-dim); }
+  .readiness-item ul { margin: 6px 0; padding-left: 20px; font-size: 14px; }
+  .readiness-item li { margin-bottom: 3px; }
+  .section-count { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .section-row { border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; background: #fff; font-size: 13px; }
+  .section-row .sec-name { font-weight: 600; margin-bottom: 4px; }
+  .section-row .sec-status { color: var(--blocked); font-size: 12px; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+  .filter-btn { padding: 5px 12px; border: 1px solid var(--line); background: #fff; border-radius: 999px; font-size: 13px; cursor: pointer; color: var(--ink); }
+  .filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .summary-text { color: var(--ink-dim); font-size: 14px; line-height: 1.7; }
+  .recom-list { list-style: none; padding: 0; margin: 0; }
+  .recom-list li { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .recom-list li:last-child { border-bottom: none; }
+  .recom-num { font-family: ui-monospace, "SF Mono", Menlo, monospace; background: var(--ink); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  th { background: #f8f9fa; text-align: left; padding: 8px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-dim); border-bottom: 2px solid var(--line); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { background: #f1f3f5; padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; cursor: zoom-out; }
+  .lightbox img { max-width: 95vw; max-height: 95vh; border-radius: 4px; }
+  .lightbox.active { display: flex; }
+  footer { color: var(--ink-dim); font-size: 12px; padding: 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SN-50 -- [TT-SET] Time Tracking General Settings -- QA Test Report</h1>
+  <div class="meta">
+    Tester: <code>richardtest</code> (Jarinee Punpeang) &middot;
+    Entity: Test TH Regional (Sprout Thailand Office) &middot; Environment: qa &middot;
+    Run: 2026-06-02 10:06
+  </div>
+</header>
+
+<main>
+
+<!-- ================================================================== -->
+<!-- EXECUTIVE SUMMARY -->
+<!-- ================================================================== -->
+<section class="card">
+  <h2>Executive Summary</h2>
+  <div class="summary-grid">
+    <div class="stat-tile"><div class="label">Total TCs</div><div class="value">53</div></div>
+    <div class="stat-tile pass"><div class="label">Pass</div><div class="value">2</div></div>
+    <div class="stat-tile fail"><div class="label">Fail</div><div class="value">3</div></div>
+    <div class="stat-tile partial"><div class="label">Partial</div><div class="value">0</div></div>
+    <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">45</div></div>
+    <div class="stat-tile fail"><div class="label">Distinct Defects</div><div class="value">3</div></div>
+  </div>
+  <p class="summary-text">
+    <strong>Overall result: BLOCKED.</strong> 46 of 50 test cases (92%) could not be executed.
+    The dominant blockers are (1) the BE subtask SN-52 (settings API <code>/api/v1/time-tracking/settings</code>)
+    still "In Progress" and returning HTTP 404, blocking all 14 API and API+UI TCs, and
+    (2) the approval chain editor UI (max_levels picker + chain editors, per spec §5.2.1-5.2.3)
+    not yet rendered in the Settings tab -- the tab shows a stub "Edit approval policy" button
+    (disabled) instead of the inline chain editor, blocking all 32 UI chain-editor TCs.
+  </p>
+  <p class="summary-text">
+    The suite was expanded mid-run from 50 to 53 TCs by appending TC-048/049/050 to close the §1.3.x anti-scope
+    coverage gap. Of the 5 directly verifiable TCs (all anti-presence scope-cut checks on the placeholder render):
+    <strong>3 FAIL</strong> (TC-046 statutory floors visible; TC-047 email reminders visible; TC-048 clock-in
+    channels visible) and <strong>2 PASS</strong> (TC-049 no rounding/grace controls; TC-050 no COA submission
+    window field). The 3 FAILs yield defects <strong>SN-50-FE001</strong>, <strong>SN-50-FE002</strong>,
+    <strong>SN-50-FE003</strong>, all attributable to pre-v1.4 placeholder leakage.
+  </p>
+  <p class="summary-text">
+    The full suite can only be re-run once SN-52 (BE endpoint) and SN-51 (FE chain editor) are
+    deployed, and after NO_ACCESS/VIEW_ONLY/SECOND_ENTITY prerequisites are provisioned.
+  </p>
+</section>
+
+<!-- ================================================================== -->
+<!-- ENVIRONMENT READINESS -->
+<!-- ================================================================== -->
+<section class="card">
+  <h2>Environment Readiness</h2>
+
+  <div class="readiness-item">
+    <h4><span class="badge blocked">BLOCKER 1</span> &nbsp; BE Deployment Gap -- SN-52 "In Progress"</h4>
+    <p>The settings API endpoint <code>/api/v1/time-tracking/settings</code> returns HTTP 404. The Keycloak auth client ID is a placeholder (<code>E2E_AUTH_CLIENT_ID=REPLACE_WITH_ACTUAL_CLIENT_ID</code>), independently blocking all API authentication.</p>
+    <ul>
+      <li><strong>Impact:</strong> ALL 11 API-tagged TCs and 5 API+UI TCs blocked (16 TCs total).</li>
+      <li><strong>Resolution:</strong> Deploy SN-52 BE subtask to QA environment; replace Keycloak client ID placeholder in <code>.env.qa</code>.</li>
+    </ul>
+  </div>
+
+  <div class="readiness-item">
+    <h4><span class="badge blocked">BLOCKER 2</span> &nbsp; Approval Chain Editor UI Not Deployed -- SN-51 "In Progress"</h4>
+    <p>The Settings tab IS present and navigable at <code>/settings/time-tracking-policies#settings</code>. However, the tab renders a different/incomplete feature set -- not the spec-described Approval card.</p>
+    <p><strong>What actually renders:</strong></p>
+    <ul>
+      <li>"Email Reminders" card (2 disabled switches -- approvers and workers)</li>
+      <li>"Approval Policy" card with a single disabled button "Edit approval policy" (no inline chain editor)</li>
+      <li>"Work Hours" card -- Thailand Market Defaults, all fields read-only</li>
+      <li>"Clock-in Methods" card -- 4 disabled switches</li>
+      <li>Footer note: "Saving these settings will be enabled when the per-entity settings endpoint ships."</li>
+    </ul>
+    <p><strong>What was expected (per spec §5.2.1-5.2.3):</strong> max_levels picker (dropdown: 2 or 3), Time Submission Approval chain editor (Level rows with role selects, +Add, Remove buttons), COA Approval chain editor (same), Save settings / Discard footer.</p>
+    <ul>
+      <li><strong>Impact:</strong> All chain-editor TCs blocked (TC-004, TC-006 to TC-039, TC-046 partial).</li>
+      <li><strong>Resolution:</strong> Deploy SN-51 FE approval chain editor to QA environment.</li>
+    </ul>
+  </div>
+
+  <div class="readiness-item">
+    <h4><span class="badge blocked">BLOCKER 3</span> &nbsp; Missing Test User Credentials</h4>
+    <p>Multiple required test accounts are not provisioned in <code>.env.qa</code>:</p>
+    <ul>
+      <li><code>E2E_TEST_MANAGER_USERNAME=NOT_YET_PROVISIONED</code> -- needed for NO_ACCESS_USER (TC-001, TC-002)</li>
+      <li><code>E2E_TEST_EMPLOYEE_USERNAME=NOT_YET_PROVISIONED</code> -- needed for NO_ACCESS_USER (TC-001)</li>
+      <li>No VIEW_ONLY_USER account (needed for TC-003)</li>
+      <li>No Local Admin account (needed for TC-005)</li>
+    </ul>
+    <ul>
+      <li><strong>Impact:</strong> TC-001, TC-002, TC-003, TC-005 blocked.</li>
+      <li><strong>Resolution:</strong> Request account provisioning from PM/dev; update <code>.env.qa</code>.</li>
+    </ul>
+  </div>
+
+  <div class="readiness-item">
+    <h4><span class="badge blocked">BLOCKER 4</span> &nbsp; SECOND_ENTITY Not Provisioned</h4>
+    <p>The <code>second-entity.md</code> recipe is a stub. No second TH entity is available for entity-scope isolation tests.</p>
+    <ul>
+      <li><strong>Impact:</strong> TC-005, TC-034, TC-044, TC-045 blocked.</li>
+      <li><strong>Resolution:</strong> Author <code>docs/qa/test-data/tt-settings/second-entity.md</code> and create SECOND_ENTITY in QA.</li>
+    </ul>
+  </div>
+
+</section>
+
+<!-- ================================================================== -->
+<!-- TC RESULTS BY SECTION -->
+<!-- ================================================================== -->
+<section class="card">
+  <h2>Test Case Results by Section</h2>
+
+  <div class="section-count">
+    <div class="section-row"><div class="sec-name">§1 RBAC &amp; Permissions (TC-001 to 005)</div><div class="sec-status">5 BLOCKED -- credential + chain editor gaps</div></div>
+    <div class="section-row"><div class="sec-name">§2 Max Levels Picker (TC-006 to 010)</div><div class="sec-status">4 BLOCKED (UI), 1 BLOCKED (API)</div></div>
+    <div class="section-row"><div class="sec-name">§3 Submission Chain Editor (TC-011 to 014)</div><div class="sec-status">4 BLOCKED -- chain editor not deployed</div></div>
+    <div class="section-row"><div class="sec-name">§4 COA Chain Editor (TC-015 to 016)</div><div class="sec-status">2 BLOCKED -- chain editor not deployed</div></div>
+    <div class="section-row"><div class="sec-name">§5 Custom Role Handling (TC-017 to 021)</div><div class="sec-status">4 BLOCKED (UI), 1 BLOCKED (API)</div></div>
+    <div class="section-row"><div class="sec-name">§6 Save-Time Validation (TC-022 to 026)</div><div class="sec-status">3 BLOCKED (UI), 2 BLOCKED (API)</div></div>
+    <div class="section-row"><div class="sec-name">§7 Form Lifecycle (TC-027 to 031)</div><div class="sec-status">5 BLOCKED -- chain editor + Save footer absent</div></div>
+    <div class="section-row"><div class="sec-name">§8 Save/Discard SD-12 (TC-032 to 033)</div><div class="sec-status">2 BLOCKED (API+UI)</div></div>
+    <div class="section-row"><div class="sec-name">§9 Worked Examples E1-E6 (TC-034 to 039)</div><div class="sec-status">5 BLOCKED; TC-035/036/037/039 UI blocked; TC-034/038 API+UI blocked</div></div>
+    <div class="section-row"><div class="sec-name">§10 Cross-Module Contracts (TC-040 to 042)</div><div class="sec-status">3 BLOCKED (API)</div></div>
+    <div class="section-row"><div class="sec-name">§11 Seed Data &amp; Entity Scoping (TC-043 to 045)</div><div class="sec-status">3 BLOCKED (API)</div></div>
+    <div class="section-row"><div class="sec-name">§12 Scope Cuts (TC-046 to TC-050)</div><div class="sec-status"><span class="badge fail">3 FAIL</span> &nbsp; <span class="badge pass">2 PASS</span></div></div>
+    <div class="section-row"><div class="sec-name">Regression Candidates (REG-001 to 003)</div><div class="sec-status">3 BLOCKED (API/API+UI)</div></div>
+  </div>
+
+  <br />
+
+  <table class="tc-table">
+    <thead>
+      <tr>
+        <th>TC</th>
+        <th>Name</th>
+        <th>Exec</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>TC-001</td><td>Manager/Worker -- Settings tab hidden</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>NO_ACCESS_USER not provisioned</td></tr>
+      <tr><td>TC-002</td><td>Direct URL access denied without view permission</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>NO_ACCESS_USER not provisioned</td></tr>
+      <tr><td>TC-003</td><td>View-only user -- form is read-only</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>VIEW_ONLY_USER not provisioned</td></tr>
+      <tr><td>TC-004</td><td>Edit user -- form is interactive</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Approval chain editor not deployed; "Edit approval policy" button is disabled stub</td></tr>
+      <tr><td>TC-005</td><td>Global Admin full access; Local Admin entity-scoped</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>SECOND_ENTITY not provisioned; Local Admin account missing</td></tr>
+      <tr><td>TC-006</td><td>Max levels picker defaults to 3</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-007</td><td>Changing max_levels to 2 -- form goes dirty</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-008</td><td>Soft warning when chain exceeds max_levels</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-009</td><td>Save blocked when chain exceeds max_levels</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-010</td><td>Server rejects tampered max_levels -- INVALID_MAX_LEVELS</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE endpoint HTTP 404; Keycloak client ID placeholder</td></tr>
+      <tr><td>TC-011</td><td>Submission chain renders Level 1 -- Direct manager</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-012</td><td>Add second level to submission chain</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-013</td><td>Add button disabled at max_levels</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-014</td><td>Remove button hidden when 1 level remains</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-015</td><td>COA chain has independent controls</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-016</td><td>COA chain -- same add/remove/max behaviors</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-017</td><td>Custom role -- label input on Custom only</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-018</td><td>Custom label -- required, max 60 chars</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-019</td><td>Custom label clears on role switch (E4)</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-020</td><td>Custom beta helper line shown</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-021</td><td>Server rejects custom_label &gt; 60 chars</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE endpoint HTTP 404</td></tr>
+      <tr><td>TC-022</td><td>At least 1 level required -- remove prevents zero</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-023</td><td>Custom empty label blocked at save (E3)</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-024</td><td>All-Custom chain blocked at save (E6)</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-025</td><td>Server rejects all-Custom chain -- CHAIN_ALL_CUSTOM</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE endpoint HTTP 404</td></tr>
+      <tr><td>TC-026</td><td>Server rejects chain exceeding max_levels -- CHAIN_TOO_LONG</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE endpoint HTTP 404</td></tr>
+      <tr><td>TC-027</td><td>Form starts clean; any edit -&gt; dirty</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor + Save/Discard footer absent</td></tr>
+      <tr><td>TC-028</td><td>Saving state -- spinner while in-flight</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor + Save/Discard footer absent</td></tr>
+      <tr><td>TC-029</td><td>Saved state -- toast and revert to clean</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor + Save/Discard footer absent</td></tr>
+      <tr><td>TC-030</td><td>Error state -- save failure keeps form dirty</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor + Save/Discard footer absent</td></tr>
+      <tr><td>TC-031</td><td>Discard reverts to last-saved state</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor + Save/Discard footer absent</td></tr>
+      <tr><td>TC-032</td><td>Save INSERTs new SD-12 row (E1, API verify)</td><td>API+UI</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404; chain editor not deployed</td></tr>
+      <tr><td>TC-033</td><td>Discard does NOT insert new row</td><td>API+UI</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404; chain editor not deployed</td></tr>
+      <tr><td>TC-034</td><td>E1 -- Add Dept Head, save, verify version=2</td><td>API+UI</td><td><span class="badge blocked">BLOCKED</span></td><td>SECOND_ENTITY missing; BE HTTP 404</td></tr>
+      <tr><td>TC-035</td><td>E2 -- Lower max_levels with 3-level chain blocks save</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-036</td><td>E3 -- Custom empty label blocks save (full flow)</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-037</td><td>E4 -- Custom label clears on role switch (full flow)</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-038</td><td>E5 -- COA chain routes COA correction requests</td><td>API+UI</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404; COA module not available</td></tr>
+      <tr><td>TC-039</td><td>E6 -- All-Custom submission chain blocked (full flow)</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>Chain editor not deployed</td></tr>
+      <tr><td>TC-040</td><td>submission_chain consumed by TR approval router</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404</td></tr>
+      <tr><td>TC-041</td><td>Custom-level skip emits approval.level.skipped audit event</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404; TR module not available</td></tr>
+      <tr><td>TC-042</td><td>Chain snapshotted at file-time -- in-flight not re-routed</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404</td></tr>
+      <tr><td>TC-043</td><td>Seeded settings record exists -- SD-11 auto-provisioning</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404</td></tr>
+      <tr><td>TC-044</td><td>Entity switching repopulates form -- no cross-entity bleed</td><td>UI</td><td><span class="badge blocked">BLOCKED</span></td><td>SECOND_ENTITY not provisioned</td></tr>
+      <tr><td>TC-045</td><td>SECOND_ENTITY settings not exposed to TH_ENTITY-scoped user</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>SECOND_ENTITY missing; BE HTTP 404</td></tr>
+      <tr><td>TC-046</td><td>Statutory Context card absent (SET-V1.1 cut)</td><td>UI</td><td><span class="badge fail">FAIL</span></td><td>"Work Hours" card surfaces statutory values (8 hrs/day, 48 hrs/week, 30 day divisor, Hazardous) badged THAILAND MARKET DEFAULTS -- substance of the cut Statutory Context, just relabeled. Defect: SN-50-FE002</td></tr>
+      <tr><td>TC-047</td><td>Notifications/email-reminder section absent (SET-V1.3 cut)</td><td>UI</td><td><span class="badge fail">FAIL</span></td><td>Email Reminders card IS present with 2 disabled toggles. Defect: SN-50-FE001</td></tr>
+      <tr><td>TC-048</td><td>Clock-in Methods section absent (§1.3.4 ownership cut) <em>(added mid-run)</em></td><td>UI</td><td><span class="badge fail">FAIL</span></td><td>Clock-in Methods card present with 4 toggles. Channels belong on Time Recording Policy [TR-3.3]. Defect: SN-50-FE003</td></tr>
+      <tr><td>TC-049</td><td>Rounding rules / grace periods absent (§1.3.5) <em>(added mid-run)</em></td><td>UI</td><td><span class="badge pass">PASS</span></td><td>No rounding-rule or grace-period controls observed on the Settings tab.</td></tr>
+      <tr><td>TC-050</td><td>COA submission window field absent (§1.3.6) <em>(added mid-run)</em></td><td>UI</td><td><span class="badge pass">PASS</span></td><td>No <code>coa_submission_window_days</code> field present. Correctly lives on Time Recording Policy [TR-3.6].</td></tr>
+      <tr><td>REG-001</td><td>SD-12 append-only -- save INSERTs new row</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404</td></tr>
+      <tr><td>REG-002</td><td>max_levels lower-than-chain soft-warn + Save block</td><td>API+UI</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404; chain editor not deployed</td></tr>
+      <tr><td>REG-003</td><td>All-Custom chain blocked server-side -- CHAIN_ALL_CUSTOM</td><td>API</td><td><span class="badge blocked">BLOCKED</span></td><td>BE HTTP 404</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================================================================== -->
+<!-- DEFECTS -->
+<!-- ================================================================== -->
+<section class="card">
+  <h2>Defects Identified</h2>
+  <p class="summary-text">3 defects identified from the Settings tab probe (all are scope-cut violations on the pre-v1.4 placeholder render).</p>
+  <div class="defect-list">
+
+    <article class="defect p2">
+      <div class="defect-head">
+        <span class="defect-key">SN-50-FE001</span>
+        <span class="pri p2">P2</span>
+        <h3>Email Reminders section present on Settings tab -- SET-V1.3 scope cut violated</h3>
+      </div>
+      <p><strong>Discovered in:</strong> TC-047 &nbsp;&nbsp; <strong>Traces To:</strong> [TT-SET-1.3.2], [TT-SET-4.2]</p>
+
+      <div class="defect-cols">
+        <div>
+          <h4>Expected</h4>
+          <p>No "Email Reminders" card or Notifications section present on the Settings tab. Per spec [TT-SET-1.3.2], Notifications (SET-V1.3) is a planned cut for v1.0 -- the Settings tab should contain ONLY the Approval card. Even in the current partially-deployed state, the Email Reminders section should not be rendered.</p>
+        </div>
+        <div>
+          <h4>Actual</h4>
+          <p>The Settings tab renders an "Email Reminders" card at the top, containing two disabled toggle switches: "Enable email reminder for approvers" (checked, disabled) and "Enable email reminder for workers" (checked, disabled). An info note states: "Time tracking is mandatory for this entity under local labor law -- email reminders cannot be disabled."</p>
+        </div>
+      </div>
+
+      <h4>Repro Steps</h4>
+      <p>1. Log in as Admin (richardtest / 8Waystop!) to Test TH Regional tenant.<br>
+      2. Navigate to Settings &gt; Time &amp; Leave &gt; Time Tracking.<br>
+      3. Click the "Settings" tab.<br>
+      4. Observe the first card on the tab -- "Email Reminders" with 2 disabled switches.</p>
+
+      <h4>Additional Context</h4>
+      <p>The spec explicitly classifies Notifications/email-reminders as SET-V1.3 -- a future version cut, not to be included in v1.0. The switches being disabled does not mitigate the scope cut violation; the card should not be rendered at all. This may indicate an accidental merge of SET-V1.3 scaffolding into the v1.0 Settings tab build.</p>
+
+      <figure class="defect-fig">
+        <img src="./screenshots/probe_tt-settings-tab.png" alt="Settings tab showing Email Reminders section" onclick="lightbox(this)" />
+        <figcaption>probe_tt-settings-tab.png -- Full Settings tab content. Email Reminders card visible at top.</figcaption>
+      </figure>
+    </article>
+
+    <article class="defect p2">
+      <div class="defect-head">
+        <span class="defect-key">SN-50-FE002</span>
+        <span class="pri p2">P2</span>
+        <h3>Statutory floors visible on Settings tab -- SET-V1.1 scope cut violated</h3>
+      </div>
+      <p><strong>Discovered in:</strong> TC-046 (reclassified PASS -&gt; FAIL) &nbsp;&nbsp; <strong>Traces To:</strong> [TT-SET-1.3.1], [TT-SET-4.2]</p>
+
+      <div class="defect-cols">
+        <div>
+          <h4>Expected</h4>
+          <p>No statutory floor values rendered on the Settings tab. Per [TT-SET-1.3.1], the "Statutory Context card was cut from Settings entirely" per SET-V1.1 (2026-04-28). Statutory facts (8h/day, 48h/week, 36h/week OT cap, 30-day salary divisor, 6-day consecutive max, 7h/42h hazardous) must surface only where they bind decisions -- on Rate Policy <code>[RP-10.1]</code> and Work Schedule wizard <code>[WS-7.3.11]</code>.</p>
+        </div>
+        <div>
+          <h4>Actual</h4>
+          <p>A "Work Hours" card badged "THAILAND MARKET DEFAULTS" renders statutory values as configurable controls: Standard hours per day (8 hrs/day), Standard hours per week (48 hrs/week), Salary divisor (30 days), and a Hazardous work classification toggle. The label "Work Hours" differs from "Statutory Context", but the substance -- displaying the listed statutory floors as configurable -- is exactly what the cut intended to prevent.</p>
+        </div>
+      </div>
+
+      <h4>Repro Steps</h4>
+      <p>1. Log in as Admin (richardtest / 8Waystop!) to Test TH Regional tenant.<br>
+      2. Navigate to Settings &gt; Time &amp; Leave &gt; Time Tracking.<br>
+      3. Click the "Settings" tab.<br>
+      4. Scroll to the "Work Hours" card (badged THAILAND MARKET DEFAULTS).</p>
+
+      <h4>Additional Context</h4>
+      <p>TC-046 was originally classified PASS because the card is not literally labeled "Statutory Context". On re-analysis of the probe screenshot, the substantive cut (statutory floors as configurable in Settings) IS violated -- only the label differs. The rename does not satisfy the spec rule. TC-046 is reclassified to FAIL with this defect attached.</p>
+
+      <figure class="defect-fig">
+        <img src="./screenshots/probe_tt-settings-tab.png" alt="Settings tab showing Work Hours statutory floors card" onclick="lightbox(this)" />
+        <figcaption>probe_tt-settings-tab.png -- Work Hours card visible mid-page with statutory values rendered as form fields.</figcaption>
+      </figure>
+    </article>
+
+    <article class="defect p2">
+      <div class="defect-head">
+        <span class="defect-key">SN-50-FE003</span>
+        <span class="pri p2">P2</span>
+        <h3>Clock-in Methods section present on Settings tab -- ownership cut violated</h3>
+      </div>
+      <p><strong>Discovered in:</strong> Probe analysis (no TC -- coverage gap for §1.3.4) &nbsp;&nbsp; <strong>Traces To:</strong> [TT-SET-1.3.4]</p>
+
+      <div class="defect-cols">
+        <div>
+          <h4>Expected</h4>
+          <p>No clock-in channel toggles rendered on the Settings tab. Per [TT-SET-1.3.4], "General Settings does NOT own clock-in channel configuration (web / mobile / kiosk / biometric). Channels live on Time Recording Policy <code>[TR-3.3]</code> -- locked to <code>[web, mobile]</code> in beta per <code>[TR-17.17]</code>."</p>
+        </div>
+        <div>
+          <h4>Actual</h4>
+          <p>A "Clock-in Methods" card at the bottom of the Settings tab renders four disabled toggles: Biometric device (fingerprint, face recognition, RFID), Mobile app (GPS), Web portal, and Kiosk mode (shared tablet at office entrance).</p>
+        </div>
+      </div>
+
+      <h4>Repro Steps</h4>
+      <p>1. Log in as Admin (richardtest / 8Waystop!) to Test TH Regional tenant.<br>
+      2. Navigate to Settings &gt; Time &amp; Leave &gt; Time Tracking.<br>
+      3. Click the "Settings" tab.<br>
+      4. Scroll to bottom -- "Clock-in Methods" card with 4 channel toggles.</p>
+
+      <h4>Test Suite Gap</h4>
+      <p>The SN-50 test suite has no scripted assertion for §1.3.4 (clock-in channels absent). SN-50-FE003 was discovered from probe-screenshot analysis during defect review, not from a scripted assertion. Recommend adding <strong>TC-048</strong> "Clock-in Methods section absent (§1.3.4 ownership cut)" to the suite before re-running.</p>
+
+      <figure class="defect-fig">
+        <img src="./screenshots/probe_tt-settings-tab.png" alt="Settings tab showing Clock-in Methods section" onclick="lightbox(this)" />
+        <figcaption>probe_tt-settings-tab.png -- Clock-in Methods card visible at bottom of Settings tab.</figcaption>
+      </figure>
+    </article>
+
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- PROBE SCREENSHOT -->
+<!-- ================================================================== -->
+<section class="card">
+  <h2>Probe Screenshot</h2>
+  <p class="summary-text">Single screenshot captured during the Settings tab probe (Step 1). Full-page capture of the Settings tab as rendered in QA on 2026-06-02.</p>
+  <figure class="defect-fig">
+    <img src="./screenshots/probe_tt-settings-tab.png" alt="Settings tab probe screenshot" onclick="lightbox(this)" />
+    <figcaption>probe_tt-settings-tab.png -- Settings tab full-page render. Note: Email Reminders card (top), Approval Policy card with disabled stub button, Work Hours card, Clock-in Methods card. The approval chain editor (max_levels picker + chain rows) from spec §5.2.1-5.2.3 is ABSENT.</figcaption>
+  </figure>
+</section>
+
+<!-- ================================================================== -->
+<!-- RECOMMENDATIONS -->
+<!-- ================================================================== -->
+<section class="card">
+  <h2>Recommendations</h2>
+  <ol class="recom-list">
+    <li>
+      <span class="recom-num">1</span>
+      <div><strong>Block QA cycle until SN-52 BE deployed.</strong> 46 of 50 TCs (92%) cannot be executed without the <code>/api/v1/time-tracking/settings</code> endpoint live in QA. This is the highest-priority blocker; all API and API+UI TCs -- including all 3 regression candidates -- are gated on it.</div>
+    </li>
+    <li>
+      <span class="recom-num">2</span>
+      <div><strong>Confirm SN-51 FE subtask status for chain editor.</strong> The max_levels picker, submission chain editor, COA chain editor, and Save/Discard footer are all absent. All 30+ UI chain-editor TCs require this FE work to be deployed before execution. Coordinate with the FE team on the expected QA deployment date.</div>
+    </li>
+    <li>
+      <span class="recom-num">3</span>
+      <div><strong>File SN-50-FE001, SN-50-FE002, SN-50-FE003 in JIRA (SNOPS) as P2.</strong> Three scope-cut violations are visible on the Settings tab in QA even before the v1.4 Approval card ships: Email Reminders (SET-V1.3), Work Hours statutory floors (SET-V1.1), and Clock-in Methods (§1.3.4). These look like pre-v1.4 placeholder artifacts. Confirm with dev whether the SN-51 FE chain editor will <em>replace</em> the entire placeholder (auto-fixing all three) or only <em>inject</em> the Approval card alongside it. If the latter, all three need explicit removal tickets. Also add <strong>TC-048</strong> for §1.3.4 (Clock-in Methods absent) -- the current suite has no scripted assertion for that cut.</div>
+    </li>
+    <li>
+      <span class="recom-num">4</span>
+      <div><strong>Request NO_ACCESS_USER and VIEW_ONLY_USER accounts from PM.</strong> TC-001, TC-002 (Manager/Worker role), and TC-003 (view-only-edit) require accounts not yet provisioned. These should be created in the Test TH Regional tenant and added to <code>docs/qa/config/.env.qa</code> before the RBAC TCs can run.</div>
+    </li>
+    <li>
+      <span class="recom-num">5</span>
+      <div><strong>Author SECOND_ENTITY recipe.</strong> <code>docs/qa/test-data/tt-settings/second-entity.md</code> is a stub. TC-005, TC-034, TC-044, TC-045 all require a second distinct TH entity with its own seeded settings record. This recipe needs authoring and the entity needs to be created in QA before entity-scope isolation tests can run.</div>
+    </li>
+    <li>
+      <span class="recom-num">6</span>
+      <div><strong>Replace Keycloak client ID placeholder.</strong> <code>E2E_AUTH_CLIENT_ID=REPLACE_WITH_ACTUAL_CLIENT_ID</code> in <code>.env.qa</code> will block all API auth independently of the BE endpoint. Request the actual client ID from the infrastructure/auth team.</div>
+    </li>
+    <li>
+      <span class="recom-num">7</span>
+      <div><strong>Re-run full suite after SN-52 + SN-51 are deployed.</strong> Once the BE endpoint and FE chain editor are both live in QA, and credentials are provisioned, the full 50-TC suite should be executable in a single run. At that point only TC-001/002 (NO_ACCESS), TC-003 (VIEW_ONLY), and TC-005/034/044/045 (SECOND_ENTITY) will need additional prerequisite coordination.</div>
+    </li>
+  </ol>
+</section>
+
+</main>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+  <img id="lightbox-img" src="" alt="" />
+</div>
+
+<footer>
+  SN-50 QA Test Report &middot; Generated: 2026-06-02 10:06 &middot; Tester: richardtest (Jarinee Punpeang) &middot; 1 screenshot
+</footer>
+
+<script>
+  function lightbox(img) {
+    var lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = img.src;
+    lb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
