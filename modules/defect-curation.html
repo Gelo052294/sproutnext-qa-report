@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SproutNext — Defect Curation (Employee Journey focus)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg:#f1f5f9; --card:#fff; --ink:#0f172a; --ink-2:#334155; --ink-dim:#64748b; --line:#e2e8f0;
+    --p1:#b91c1c; --p1-bg:#fee2e2; --p2:#b45309; --p2-bg:#fef3c7; --p3:#475569; --p3-bg:#e2e8f0;
+    --pass:#15803d; --pass-bg:#dcfce7; --info:#1d4ed8; --info-bg:#dbeafe;
+    --t1:#7f1d1d; --t1-bg:#fef2f2; --t1-ac:#dc2626;
+    --found:#0e7490; --found-bg:#cffafe; --onb:#9333ea; --onb-bg:#f3e8ff;
+    --manage:#1d4ed8; --manage-bg:#dbeafe; --org:#0f766e; --org-bg:#ccfbf1; --leave:#b45309; --leave-bg:#fef3c7;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  header { background:linear-gradient(120deg,#7f1d1d 0%,#991b1b 55%,#b45309 100%); color:#fff; padding:30px 44px 26px; }
+  header h1 { margin:0 0 8px; font-size:27px; font-weight:800; letter-spacing:-0.02em; }
+  header .meta { color:#fde2e2; font-size:14px; font-weight:500; }
+  header .meta code { background:rgba(255,255,255,0.18); padding:1px 7px; border-radius:5px; color:#fff; }
+  main { max-width:1280px; margin:0 auto; padding:24px 20px 64px; }
+  .section-label { font-size:13px; font-weight:800; letter-spacing:0.06em; color:var(--ink-2); text-transform:uppercase; margin:32px 4px 14px; }
+  .section-label .sub { font-weight:500; text-transform:none; letter-spacing:0; color:var(--ink-dim); margin-left:10px; font-size:13px; }
+  .lead { background:var(--card); border:1px solid var(--line); border-left:5px solid var(--t1-ac); border-radius:10px; padding:16px 20px; font-size:14px; color:var(--ink-2); }
+  .lead strong { color:var(--ink); }
+
+  /* KPI */
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-top:14px; }
+  .kpi { background:var(--card); border:1px solid var(--line); border-radius:11px; padding:15px 16px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .kpi .l { font-size:11px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; color:var(--ink-dim); }
+  .kpi .v { font-size:32px; font-weight:800; line-height:1; margin-top:6px; letter-spacing:-.02em; }
+  .kpi .n { font-size:12px; color:var(--ink-dim); margin-top:5px; }
+  .kpi.p1 .v { color:var(--p1); } .kpi.p2 .v { color:var(--p2); } .kpi.p3 .v { color:var(--p3); }
+
+  /* Journey strip */
+  .journey { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  @media (max-width:880px){ .journey { grid-template-columns:1fr 1fr; } }
+  .jstage { background:var(--card); border:1px solid var(--line); border-radius:11px; padding:14px 15px; box-shadow:0 1px 3px rgba(15,23,42,.06); position:relative; overflow:hidden; }
+  .jstage::before { content:""; position:absolute; inset:0 auto 0 0; width:5px; }
+  .jstage.found::before{background:var(--found);} .jstage.onb::before{background:var(--onb);}
+  .jstage.manage::before{background:var(--manage);} .jstage.org::before{background:var(--org);} .jstage.leave::before{background:var(--leave);}
+  .jstage .step { font-size:10.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.04em; }
+  .jstage .nm { font-size:15px; font-weight:800; margin:3px 0 8px; }
+  .jstage .mod { font-size:11.5px; color:var(--ink-dim); margin-bottom:9px; }
+  .jstage .cnt { font-size:13px; font-weight:600; color:var(--ink-2); }
+  .jstage .cnt b { font-size:20px; font-weight:800; color:var(--ink); }
+  .jstage .p1n { color:var(--p1); font-weight:800; }
+
+  /* Tier cards */
+  .tier { background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 1px 3px rgba(15,23,42,.06); overflow:hidden; margin-bottom:18px; }
+  .tier > h3 { margin:0; padding:15px 22px; font-size:16px; font-weight:800; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; }
+  .tier.t1 > h3 { background:var(--t1-bg); color:var(--t1); }
+  .tier.t2 > h3 { background:var(--p1-bg); color:var(--p1); }
+  .tier.t3 > h3 { background:var(--p2-bg); color:var(--p2); }
+  .tier.t4 > h3 { background:var(--p3-bg); color:var(--p3); }
+  .tier.tdone > h3 { background:var(--pass-bg); color:var(--pass); }
+  .tier > h3 .hint { font-weight:500; font-size:12.5px; color:var(--ink-dim); margin-left:auto; }
+
+  table { border-collapse:collapse; width:100%; font-size:13.5px; }
+  th { text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-2); font-weight:800; background:#f8fafc; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td { padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafcff; }
+  .key { font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; white-space:nowrap; }
+  .sev { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:800; }
+  .sev.p1{ background:var(--p1-bg); color:var(--p1);} .sev.p2{ background:var(--p2-bg); color:var(--p2);} .sev.p3{ background:var(--p3-bg); color:var(--p3);}
+  .stg { display:inline-block; padding:2px 9px; border-radius:999px; font-size:10.5px; font-weight:700; white-space:nowrap; }
+  .stg.found{ background:var(--found-bg); color:var(--found);} .stg.onb{ background:var(--onb-bg); color:var(--onb);}
+  .stg.manage{ background:var(--manage-bg); color:var(--manage);} .stg.org{ background:var(--org-bg); color:var(--org);} .stg.leave{ background:var(--leave-bg); color:var(--leave);} .stg.cfg{ background:#f1f5f9; color:var(--ink-dim);} .stg.act{ background:#fce7f3; color:#be185d;}
+  .st { font-size:11.5px; font-weight:700; white-space:nowrap; }
+  .st.open{ color:var(--p1);} .st.partial{ color:var(--p2);} .st.regress{ color:var(--p1);} .st.notr{ color:var(--ink-dim);} .st.fixed{ color:var(--pass);} .st.blocked{ color:#475569;}
+  td .jira { font-family:ui-monospace,monospace; font-size:11px; color:var(--info); }
+  td.sum { color:var(--ink-2); }
+  td.sum .why { display:block; color:var(--ink-dim); font-size:12px; margin-top:3px; }
+
+  .themes { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  @media (max-width:880px){ .themes { grid-template-columns:1fr; } }
+  .theme { background:var(--card); border:1px solid var(--line); border-top:4px solid var(--t1-ac); border-radius:11px; padding:16px 18px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .theme h4 { margin:0 0 8px; font-size:14.5px; }
+  .theme p { margin:0 0 8px; font-size:13px; color:var(--ink-2); }
+  .theme .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .theme .chips .key { background:#f1f5f9; padding:2px 7px; border-radius:5px; }
+  .theme .chips .key.done { text-decoration:line-through; opacity:0.55; }
+
+  footer { color:var(--ink-dim); font-size:12.5px; padding:26px 4px 0; text-align:center; }
+  footer code { background:#e9eef3; padding:1px 6px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SproutNext — Defect Curation</h1>
+  <div class="meta">
+    Employee-journey focus &middot; Environment: <code>qa</code> &middot; entity <code>QA Testing</code> &middot; Curated 2026-06-01 &middot; <strong>Refreshed 2026-06-05 — SN-70 first execution + SN-62 defects + full regression; reconciled to _snapshot.json</strong>
+  </div>
+</header>
+
+<main>
+
+  <div class="lead">
+    <strong>What this is.</strong> Every open defect from the six executed module reports, ranked by urgency and read through
+    the lens of the <strong>employee journey</strong> &mdash; the path from <em>creating an entity</em> &rarr; <em>onboarding employees</em> &rarr;
+    <em>inviting/activating them</em> &rarr; <em>finding &amp; organizing them</em>. <strong>Tier 1</strong> is the fix-first set: P1s that sit
+    directly on that path. <strong>02 Jun retest:</strong> 39 defects re-executed; <strong style="color:var(--pass)">20 verified fixed</strong>, 4 partial, 13 still open, 2 blocked,
+    and <strong style="color:var(--p1)">1 new P1 filed (SNOPS-99 — invite wizard hard-broken)</strong>. The hottest cluster is still <strong>Onboarding (Bulk Upload, SN-26)</strong>.
+  </div>
+
+  <div class="lead" style="border-left-color:var(--p1);background:#fef2f2;margin-top:10px">
+    <strong>03 Jun end-to-end run (9 modules, QA Testing entity).</strong> A burst of bulk-upload HTTP&nbsp;500s during the run looked like a P1 onboarding regression, but a 12:50 retest <strong>did not reproduce it</strong> (returned 201) — it was a <strong>transient BFF outage</strong>, so <code>SN-26-NEW-001/002</code> are withdrawn (SN-26's run numbers are outage-affected, re-run pending). <strong>10 new defects confirmed</strong> on retest (SN-22 SSO number shown unmasked, SN-10 VAT field absent from create, SN-66 no self-deactivate guard, SN-2 duplicate-kebab disabled, SN-18 dup-name save error, + more). Confirmed still open: <strong>SNOPS-99</strong> (invite wizard 400), <strong>SNOPS-73</strong> (Company Cancel), <strong>SN-14-FE001</strong> (Reactivate unreachable), SN-50 (BE still not deployed). All new defects are staged to file. Full run: <code>docs/qa/runs/2026-06-03_e2e-all-modules.md</code>.
+  </div>
+
+  <div class="lead" style="border-left-color:var(--p1);background:#fef2f2;margin-top:10px">
+    <strong>04 Jun — SN-70 (Roles &amp; Access) first execution.</strong> Module #9, run ADMIN-only on entity <code>QA Testing</code> (UI via Playwright at <code>/settings/roles-access</code> + API via SN-26 bearer-replay). 57 of 93 TCs executed, <strong>21 distinct defects (11 High/Critical, 3 backend)</strong>; ~36 BLOCKED on env provisioning (no non-admin role users, no ApiKey). Two backend P1s RAISE the critical count: <strong>SN-70-BE-H1</strong> (self-assign 500 — SoD <code>rbac-self</code> server gate missing; with FE-H1 self-escalation is unguarded at <em>both</em> layers, the 500 only incidentally prevents the write) and <strong style="color:var(--p1)">SN-70-BE-H2 (URGENT)</strong> — the batch-get transitional alias <code>/roles/identities:batchGet</code> already returns 405, and <strong>SN-74 Workforce v1.2 ships June 8 against it</strong> — a cross-team release blocker. None filed yet. Source: <code>docs/qa/test-cases/SN-70/results/2026-06-04_RUN-SUMMARY.md</code>, <code>health-2026-06-04.md</code>.
+  </div>
+
+  <div class="lead" style="border-left-color:var(--pass);background:#f0fdf4;margin-top:10px">
+    <strong>05 Jun — full regression of 8 modules (entity Test TH Regional, ~150 employees).</strong> <strong style="color:var(--pass)">0 product regressions</strong> — no previously-passing TC broke. Confirmed fixes: <strong>SN-2</strong> (18 TH national holidays now seeded + Company-holiday CRUD), <strong>SN-22</strong> (Policy Assignments card + Picker), <strong>SN-18</strong> (<code>/groups/.../reactivate</code> 200), <strong>SN-26</strong> (failed-import detail panel + "Fix and retry"). One new cross-cutting UX bug found: <strong>silent failure on write 403</strong> (SN-6, SN-10, SN-14) — failed Settings saves show no toast/banner. <em>Caveat (not a product defect):</em> the regression admin <code>johnangelol@sprout.ph</code> hit endpoint-specific write-403s on company/leavepolicies/entities/departments, blocking some save/edit TCs — investigate whether the role lacks write scopes or BFF authz is inconsistent. Source: <code>docs/qa/curation/health-2026-06-05.md</code>.
+  </div>
+
+  <div class="lead" style="border-left-color:var(--manage);background:#f0f5ff;margin-top:10px">
+    <strong>05 Jun — SN-62 (Clock In/Out chip) synced.</strong> Functional core works (chip deployed; admin can clock in/out). <strong>5 FE defects</strong> added to this curation under the <em>Manage</em> stage (daily attendance): <code>SN-62-FE-NEW-001</code> P1 i18n Hard Lock (TC-083), <code>SN-62-FE-NEW-002</code> P2 dismiss-on-outside-click / <code>module:dismissPopovers</code> (TC-009), and three P3 polish items (<code>-003</code> animation TC-081, <code>-004</code> hover elevation TC-080, <code>-005</code> role-badge spec-ref TC-090). <em>Environment caveat (NOT a defect):</em> SN-62's remaining TCs are blocked because <code>gelosprout2</code>/<code>gelosprout3</code> carry the admin role (not employee/manager) &rarr; HTTP 403 on Clock In (missing <code>attendance.own.clock</code> scope). Reprovision roles to unblock the active/done-state TCs.
+  </div>
+
+  <div class="section-label">At a glance <span class="sub">— reconciled to <code>_snapshot.json</code> &middot; 89 total / 77 open / 12 closed across all 11 modules</span></div>
+  <div class="lead" style="border-left-color:var(--p1);background:#fff;margin:0 0 14px">
+    <strong>77 open defects across all modules</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
+    deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full 89-row inventory.
+    The full counts trace to <code>docs/qa/curation/_snapshot.json</code> (89 total &middot; 77 open &middot; 12 closed).
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Total defects</div><div class="v">89</div><div class="n">all 11 modules &middot; per <code>_snapshot.json</code></div></div>
+    <div class="kpi"><div class="l">Open defects</div><div class="v">77</div><div class="n">P1 8 + P2 38 + P3/Med 31 = 77</div></div>
+    <div class="kpi p1"><div class="l">P1 (critical)</div><div class="v">8</div><div class="n">incl. 2 SN-70 backend, +1 SN-62 i18n Hard Lock</div></div>
+    <div class="kpi p2"><div class="l">P2 (high)</div><div class="v">38</div><div class="n">incl. SN-70 FE-H, silent-403, +1 SN-62</div></div>
+    <div class="kpi p3"><div class="l">P3 / Med</div><div class="v">31</div><div class="n">incl. SN-70 mediums, +3 SN-62 polish</div></div>
+    <div class="kpi"><div class="l">Closed</div><div class="v" style="color:var(--pass)">12</div><div class="n">verified fixed / Jira Done</div></div>
+  </div>
+
+  <div class="section-label">Where it hurts on the journey <span class="sub">— open defect count &middot; P1 count per stage &middot; post-retest</span></div>
+  <div class="journey">
+    <div class="jstage found">
+      <div class="step">STEP 1</div><div class="nm">Foundation</div>
+      <div class="mod">Entities (SN-10) &middot; Company (SN-6)</div>
+      <div class="cnt"><b>4</b> open &middot; <span class="p1n">1 P1</span> &middot; <span style="color:var(--pass);font-weight:700">+10 closed</span></div>
+    </div>
+    <div class="jstage onb">
+      <div class="step">STEP 2 &middot; HOTTEST</div><div class="nm">Onboard</div>
+      <div class="mod">Bulk Upload (SN-26)</div>
+      <div class="cnt"><b>12</b> open &middot; <span class="p1n">2 P1</span></div>
+    </div>
+    <div class="jstage manage">
+      <div class="step">STEP 3</div><div class="nm">Manage &amp; Find</div>
+      <div class="mod">Workforce (SN-66) &middot; Roles &amp; Access (SN-70) &middot; Clock In/Out (SN-62)</div>
+      <div class="cnt"><b>25</b> open &middot; <span class="p1n">3 P1</span> &middot; <span style="color:var(--ink-dim);font-weight:500">+10 SN-70 (1 P1 + 9 FE-H), +5 SN-62 (1 P1 + 1 P2 + 3 P3)</span></div>
+    </div>
+    <div class="jstage org">
+      <div class="step">STEP 4</div><div class="nm">Organize</div>
+      <div class="mod">Groups (SN-18) &middot; R&amp;A (SN-70) &middot; Settings saves</div>
+      <div class="cnt"><b>4</b> open &middot; <span class="p1n">2 P1</span> &middot; <span style="color:var(--ink-dim);font-weight:500">+1 SN-70 BE-H2, +1 silent-403</span> &middot; <span style="color:var(--pass);font-weight:700">+3 closed</span></div>
+    </div>
+    <div class="jstage leave">
+      <div class="step">STEP 5 &middot; CLEARED</div><div class="nm">Time &amp; Leave</div>
+      <div class="mod">Holiday (SN-2)</div>
+      <div class="cnt"><b>0</b> open &middot; <span style="color:var(--pass);font-weight:700">+3 verified</span> <span style="color:var(--ink-dim);font-weight:500">(all 5 now closed)</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Tier 1 &mdash; Fix first <span class="sub">— P1s sitting directly on the hire-to-active path</span></div>
+  <div class="tier t1">
+    <h3>🚨 Critical &amp; on the employee journey <span class="hint">12 defects &middot; +2 SN-70 backend P1 + 1 SN-62 P1 (NOT FILED) &middot; 1 withdrawn &middot; 4 closed</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Defect</th><th>Sev</th><th>Stage</th><th>What breaks &amp; why it matters</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr style="opacity:0.55;text-decoration:line-through"><td>—</td><td class="key">SN-26-NEW-001</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum"><strong>WITHDRAWN:</strong> the 08:45 valid-upload 500 was a transient BFF outage.<span class="why">Did not reproduce at 12:50 (returned 201). Not a real defect; SN-26 needs a clean re-run for accurate numbers.</span></td><td><span class="st fixed">Withdrawn · transient</span></td><td><span class="jira">n/a</span></td></tr>
+        <tr><td>1</td><td class="key">SN-26-FE001</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Upload submit handler silently swallows backend 400 errors.<span class="why">Onboarding can fail with zero feedback &mdash; the user believes employees were created when they weren't. 5th retest cycle failed 03 Jun.</span></td><td><span class="st open">Open · 5th retest failed</span></td><td><span class="jira">SNOPS-38</span></td></tr>
+        <tr><td>2</td><td class="key">SN-66-FE026</td><td><span class="sev p1">P1</span></td><td><span class="stg act">Activate</span></td><td class="sum"><strong>NEW 02 Jun:</strong> Invite-a-person wizard submit hard-broken &mdash; POST <code>/workforce/employees/invite</code> &rarr; 400 <code>payrollRunGroupId not a Guid</code>; wizard has no such field.<span class="why">Single-employee invite creation is fully down; FE/BE contract drift from the Run Groups work. Also blocks SNOPS-89 retest.</span></td><td><span class="st open">Open · new 02 Jun</span></td><td><span class="jira">SNOPS-99</span></td></tr>
+        <tr><td>3</td><td class="key">SN-26-FE014</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Row warning taxonomy absent &mdash; warnings surface as hard Errors.<span class="why">Valid rows are blocked as if invalid, stalling otherwise-good bulk onboards.</span></td><td><span class="st notr">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>4</td><td class="key">SN-70-BE-H1</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum"><strong>NEW 04 Jun:</strong> Self-assign returns HTTP 500 (unhandled exception) &mdash; the SoD <code>rbac-self</code> server gate is missing or throws.<span class="why">With FE-H1 (UI gate also missing), self-escalation to Organization Admin is unguarded at <em>both</em> layers; the 500 only incidentally prevents the write (no row committed). Should be a clean <code>422 ROLES_SOD_VIOLATION</code>.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>5</td><td class="key">SN-70-BE-H2</td><td><span class="sev p1">P1</span></td><td><span class="stg org">Organize</span></td><td class="sum"><strong>NEW 04 Jun · URGENT cross-team blocker:</strong> batch-get transitional alias <code>/roles/identities:batchGet</code> returns 405 &mdash; the alias is already removed.<span class="why"><strong>SN-74 (Workforce v1.2) ships June 8 consuming the old URL via this alias</strong> &mdash; role hydration will break on deploy. Restore the alias through Slice 8.10 or coordinate SN-74 to the new URL before June 8. Escalate immediately.</span></td><td><span class="st notr">Open · NOT FILED · URGENT</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>6</td><td class="key">SN-62-FE-NEW-001</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62 Clock In/Out chip:</strong> i18n Hard Lock violation &mdash; zero <code>data-i18n</code> attributes across the entire chip panel DOM; all strings hardcoded English ("My Attendance", "Clock in", "Clock out", etc.).<span class="why">Spec &sect;16.1 lists i18n keys as a Hard Lock &mdash; Thai locale launch cannot ship without these. Same defect class as SN-70-FE-H8. TC-083, confirmed both runs.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>7</td><td class="key">SN-18-BE001</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum">Departments endpoint &mdash; route now fixed; Workforce filter works (16 depts, 200 OK). Residual: Groups rule-builder hardcodes <code>pageSize=200</code> &rarr; 400 (API max 100).<span class="why">One-line FE fix (cap at 100) closes this residual <em>and</em> SN-18-FE005.</span></td><td><span class="st partial">Partial · 02 Jun</span></td><td><span class="jira">SNOPS-56</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>8</td><td class="key">SN-26-BE001</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Importer skips the <code>pending_invite</code> state &mdash; breaks the Workforce v1.1 bulk-send-invites contract.</td><td><span class="st fixed">&#10004; Closed &middot; Jira Done</span></td><td><span class="jira">SNOPS-40</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>9</td><td class="key">SN-10-BE001</td><td><span class="sev p1">P1</span></td><td><span class="stg found">Foundation</span></td><td class="sum">Entity CREATE API returned HTTP 500 for a valid payload (regression).<span class="why">Verified fixed 01–02 Jun: POST returns 201; UI create works end-to-end.</span></td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-61</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>10</td><td class="key">SN-26-FE002</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Cross-border work-location guard entirely absent.</td><td><span class="st fixed">&#10004; Closed &middot; Jira Done</span></td><td><span class="jira">SNOPS-39</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>11</td><td class="key">SN-66-FE004</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Saved-view preset URL stripped on direct load (<code>?preset=</code> dropped).</td><td><span class="st fixed">&#10004; Fixed &middot; 02 Jun</span></td><td><span class="jira">SNOPS-29</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>12</td><td class="key">SN-66-FE002</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Results counter &amp; pagination desync ("Showing 1&ndash;50 of N" wrong).</td><td><span class="st fixed">&#10004; Fixed &middot; 02 Jun</span></td><td><span class="jira">SNOPS-27</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Tier 2 &mdash; Other open P1s <span class="sub">— urgent, but off the core onboarding path</span></div>
+  <div class="tier t2">
+    <h3>🔴 High-severity, supporting flows <span class="hint">5 defects &middot; 1 still open &middot; 4 closed on retest</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Defect</th><th>Sev</th><th>Stage</th><th>What breaks</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td class="key">SN-6-FE004</td><td><span class="sev p1">P1</span></td><td><span class="stg found">Foundation</span></td><td class="sum">Company-details Cancel shows no discard dialog and doesn't navigate to Settings &mdash; local reset only; 4 nav/guard TCs fail on this one root cause (data-loss risk). Retest 02 Jun: both sub-issues still reproduce.</td><td><span class="st open">Open · retest failed 02 Jun</span></td><td><span class="jira">SNOPS-73</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>11</td><td class="key">SN-2-BE002</td><td><span class="sev p1">P1</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum">National holidays fail to load &mdash; 0 seeded rows for TH 2026/2027, plus an ERR_ABORTED retry storm.</td><td><span class="st fixed">&#10004; Closed &middot; Jira Done</span></td><td><span class="jira">SNOPS-67</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>12</td><td class="key">SN-2-BE001</td><td><span class="sev p1">P1</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum">Add Holiday save fails with a generic error on all tabs &mdash; no holiday row can be created.</td><td><span class="st fixed">&#10004; Closed &middot; Jira Done</span></td><td><span class="jira">SNOPS-64</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>13</td><td class="key">SN-2-FE001</td><td><span class="sev p1">P1</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum">"Public holiday" day_type option missing from the Company-tab Add Holiday modal.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-69</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td>14</td><td class="key">SN-10-FE001</td><td><span class="sev p1">P1</span></td><td><span class="stg found">Foundation</span></td><td class="sum">Entity create form silently swallows backend 4xx/5xx &mdash; no error surfaced.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-62</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Tier 2b &mdash; SN-70 Roles &amp; Access High-severity <span class="sub">— admin assigning access &middot; manage/org stage &middot; first execution 04 Jun &middot; none filed</span></div>
+  <div class="tier t2">
+    <h3>🔴 Roles &amp; Access (SN-70) — High FE defects <span class="hint">9 FE-High + 1 cross-cutting &middot; all open / NOT FILED</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Defect</th><th>Sev</th><th>Stage</th><th>What breaks</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr><td>H1</td><td class="key">SN-70-FE-H1</td><td><span class="sev p2">High</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum"><strong>Security:</strong> SoD <code>rbac-self</code> UI gate missing &mdash; Admin can select themselves and self-assign Org/Entity Admin; no SoD block, Continue stays enabled. Pairs with BE-H1 (both layers unguarded). <span class="why">TC-018.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H2</td><td class="key">SN-70-FE-H2</td><td><span class="sev p2">High</span></td><td><span class="stg org">Organize</span></td><td class="sum">Friction typed-ack is case-insensitive &mdash; <code>qa testing</code> accepted for entity "QA Testing"; tier-4 Org Admin gate weakened. <span class="why">TC-022/070.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H3</td><td class="key">SN-70-FE-H3</td><td><span class="sev p2">High</span></td><td><span class="stg org">Organize</span></td><td class="sum"><code>frictionAcks</code> not reset on Back + role change &mdash; Entity-Admin checkbox stays ticked after changing role; Confirm enables without re-ack (friction bypass). <span class="why">TC-072.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H4</td><td class="key">SN-70-FE-H4</td><td><span class="sev p2">High</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><code>module:openRightPane</code> never fires &mdash; role cards open an inline DOM drawer; App Shell right-pane postMessage contract not implemented. <span class="why">TC-044.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H5</td><td class="key">SN-70-FE-H5</td><td><span class="sev p2">High</span></td><td><span class="stg org">Organize</span></td><td class="sum">postMessage filter key wrong &mdash; "View change history" emits <code>filters.user_id</code>; §13.4 requires <code>filters.identity_id</code>. Consuming modules receive no value. <span class="why">TC-042.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H6</td><td class="key">SN-70-FE-H6</td><td><span class="sev p2">High</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Entity switch mid-wizard: no discard guard &mdash; switching entity with a dirty draft silently adopts the new entity; stale person selection carries over (data-loss pattern). <span class="why">TC-048/061.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H7</td><td class="key">SN-70-FE-H7</td><td><span class="sev p2">High</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Revoke flow not implemented &mdash; no "Revoke roles" item in the row kebab. <span class="why">TC-059.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H8</td><td class="key">SN-70-FE-H8</td><td><span class="sev p2">High</span></td><td><span class="stg org">Organize</span></td><td class="sum">i18n not wired &mdash; zero <code>data-i18n</code> attributes across the module (Hard Lock #15 failing); locale switch leaves all copy English. <span class="why">TC-056/069.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>H9</td><td class="key">SN-70-FE-H9</td><td><span class="sev p2">High</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Person Summary drawer load failure (FE) &mdash; "Couldn't load assignments" for every row with <strong>no API call firing</strong> (null-deref); "Granted by"/connector links/Direct Manager unverifiable. <span class="why">TC-054/085/086.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td>+</td><td class="key">XCUT-403</td><td><span class="sev p2">High</span></td><td><span class="stg org">Organize</span></td><td class="sum"><strong>NEW 05 Jun · cross-cutting:</strong> Silent failure on write 403 (SN-6, SN-10, SN-14) &mdash; failed Settings saves / lifecycle actions show <strong>no error toast or banner</strong>; zero user feedback. (Entity create does surface an inline error — gap is Settings-save + lifecycle.) File as a single cross-cutting FE bug.<span class="why">health-2026-06-05 F-1.</span></td><td><span class="st open">Open · NEW</span></td><td><span class="jira">to file</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Tier 3 &mdash; High (open P2) <span class="sub">— journey-relevant items listed first</span></div>
+  <div class="tier t3">
+    <h3>🟠 P2 <span class="hint">22 defects &middot; 14 still open &middot; 8 closed</span></h3>
+    <table>
+      <thead><tr><th>Defect</th><th>Sev</th><th>Stage</th><th>Summary</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr><td class="key">SN-62-FE-NEW-002</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> Clock chip doesn't subscribe to <code>module:dismissPopovers</code> postMessage; panel stays open after broadcast (cross-module dismiss coordination broken).<span class="why">Spec [CC-10.3]. TC-009.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-26-FE010</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Entity switch with a file loaded: no discard-confirmation modal (data-loss risk).</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-26-FE012</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum"><code>below_min_wage</code> error not surfaced for a Base Rate under the floor.</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-26-FE011</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Salary-type short-form synonyms (M, D) throw <code>invalid_enum</code> instead of mapping.</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-26-FE015</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Non-Thai mobile phone accepted without an <code>invalid_format</code> error.</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-26-FE013</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">No pre-flight amber warning when the target entity has no Payroll Run Group.</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-26-FE003</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Performance contract breached &mdash; 500-row file now takes <strong>33.0s</strong> (was 23.6s; budget &le;2s/phase). Regressed further on 02 Jun retest.</td><td><span class="st regress">Open · regressed 02 Jun</span></td><td><span class="jira">SNOPS-41</span></td></tr>
+        <tr><td class="key">SN-26-FE005</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">"Download errors.csv" now present in Stage 2b &#10004;; "Download result.csv" unverified (needs a sanctioned real import).</td><td><span class="st partial">Partial · 02 Jun</span></td><td><span class="jira">SNOPS-43</span></td></tr>
+        <tr><td class="key">SN-26-BE002</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">BE draft toggles still include the welcome-email field; PM directive (5 May) not propagated.</td><td><span class="st notr">Open · in progress</span></td><td><span class="jira">SNOPS-44</span></td></tr>
+        <tr><td class="key">SN-10-FE002</td><td><span class="sev p2">P2</span></td><td><span class="stg found">Foundation</span></td><td class="sum">Entity create form "Contact Information" section &mdash; employee picker landed 01 Jun; section label + HR free-text fields still off-spec.</td><td><span class="st partial">Open · partial</span></td><td><span class="jira">SNOPS-19 (comment)</span></td></tr>
+        <tr><td class="key">SN-10-FE003</td><td><span class="sev p2">P2</span></td><td><span class="stg found">Foundation</span></td><td class="sum">Payroll Run Groups (spec v1.2): Details tab badge list landed 02 Jun (Monthly, Daily); create-form tile group still absent and BE drops <code>runGroups[]</code>.</td><td><span class="st partial">Partial · 02 Jun</span></td><td><span class="jira">SNOPS-63</span></td></tr>
+        <tr><td class="key">SN-10-FE004</td><td><span class="sev p2">P2</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Details tab: Company Website + Created By landed; Created By unpopulated ("&mdash;") and HR fields under wrong section label. Sent back to In Progress.</td><td><span class="st partial">Partial · 02 Jun</span></td><td><span class="jira">SNOPS-65</span></td></tr>
+        <tr><td class="key">SN-66-FE025</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Cancel invite doesn't move row to Inactive (spec &sect;5.0 deviation).<span class="why">Retest 02 Jun confirmed: post-cancel Employment Status stays Active. Cascading effect of FE018 dual-status model. PM/architect decision needed.</span></td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-94</span></td></tr>
+        <tr><td class="key">SN-66-FE018</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Workforce dual-status model (Employment + Invite) not in spec.<span class="why">Retest 02 Jun confirmed: rows carry independent <code>statusName</code> + <code>inviteStatusName</code> (Active+Invited on same row). Architectural &mdash; needs PM/eng decision.</span></td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-88</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-18-FE001</td><td><span class="sev p2">P2</span></td><td><span class="stg org">Organize</span></td><td class="sum">Unsaved group-Settings changes discarded with no confirmation &mdash; discard alertdialog now fires (Keep editing / Discard).</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-57</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-18-FE002</td><td><span class="sev p2">P2</span></td><td><span class="stg org">Organize</span></td><td class="sum">'Change mode' button was a no-op &mdash; "Change to Static mode?" modal now opens with impact summary + acknowledgement.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-58</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-10-FE005</td><td><span class="sev p2">P2</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Market dropdown inconsistency &mdash; now TH/PH/SG selectable, MY+ID "Soon", Vietnam removed.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-66</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-6-FE006</td><td><span class="sev p2">P2</span></td><td><span class="stg found">Foundation</span></td><td class="sum">Phone field invalid characters &mdash; inline error now fires on blur and Save; save blocked.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-76</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-6-FE005</td><td><span class="sev p2">P2</span></td><td><span class="stg found">Foundation</span></td><td class="sum">All 8 inputs now carry <code>maxlength</code> (200/500/500/100/100/100/254/30); browser enforces cap.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-75</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-6-FE002</td><td><span class="sev p2">P2</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Save toast now reads exactly "Company details saved."</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-74</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-2-FE002</td><td><span class="sev p2">P2</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum">Year-window validation &mdash; 2028 now hard-blocked with Save disabled; in-window past date soft-warns.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-71</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-66-FE007</td><td><span class="sev p2">P2</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Breadcrumb missing parent &mdash; "Workforce /" parent now shown above employee profile.</td><td><span class="st fixed">&#10004; Fixed &middot; 02 Jun</span></td><td><span class="jira">SNOPS-32</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Tier 4 &mdash; Low (open P3) <span class="sub">— cosmetic, copy, or intended-behaviour</span></div>
+  <div class="tier t4">
+    <h3>🟡 P3 / Medium <span class="hint">21 P3 (13 open, +3 SN-62) + 9 SN-70 mediums (grouped)</span></h3>
+    <table>
+      <thead><tr><th>Defect</th><th>Sev</th><th>Stage</th><th>Summary</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr><td class="key">SN-70-MED &times;9</td><td><span class="sev p3">Med</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum"><strong>SN-70 medium cluster (04 Jun, grouped):</strong> <code>BE-M1</code> batch-get wire contract (key <code>items</code> not <code>identities</code>; field-level errors not <code>ROLES_*</code> enums) · <code>FE-M1</code> DPO/Auditor confidential fields show ✓ where ✗ expected (<em>gated on Appendix A sign-off — re-validate</em>) · <code>FE-M2</code> discard prompt on empty draft · <code>FE-M3</code> bulk "Assign role" loads 0 people · <code>FE-M4</code> tile strip all zeros + N+1 fetches · <code>FE-M5</code> People-tab search updates URL but doesn't filter · <code>FE-M6</code> Compare modal a11y (focus-trap leak, ESC no-close) · <code>FE-M7</code> audit <code>module:navigate</code> missing <code>target_role</code> · <code>FE-M8</code> audit deep-link info toast absent.<span class="why">All open / NOT FILED. Source: 2026-06-04_RUN-SUMMARY.md.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-62-FE-NEW-003</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> Panel animation uses <code>enter</code> at <code>0.15s</code>; spec requires <code>clockPanelIn</code> at <code>0.2s</code> (cosmetic spec drift). <span class="why">TC-081.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-62-FE-NEW-004</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> No <code>hover:-translate-y-px</code> elevation on chip hover (color-only feedback); spec requires <code>translateY(-1px)</code>. <span class="why">TC-080.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-62-FE-NEW-005</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> Role-badge <code>&lt;status&gt;</code> element on topbar missing <code>data-spec-ref</code> (location selector spec-ref added between runs; badge remains). <span class="why">TC-090, partial fix observed.</span></td><td><span class="st partial">Open · partial</span></td><td><span class="jira">to file</span></td></tr>
+        <tr><td class="key">SN-18-FE005</td><td><span class="sev p3">P3</span></td><td><span class="stg org">Organize</span></td><td class="sum">Rule-builder departments fetch still 400s &mdash; <strong>new cause:</strong> endpoint exists now, but FE sends <code>pageSize=200</code> (API max 100). Same residual as SN-18-BE001; one-line fix closes both.</td><td><span class="st open">Open · new cause 02 Jun</span></td><td><span class="jira">SNOPS-60</span></td></tr>
+        <tr><td class="key">SN-26-BE003</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">BFF GET requests with <code>Content-Type: application/json</code> trigger a body-parse 400.</td><td><span class="st notr">Open · in progress</span></td><td><span class="jira">SNOPS-49</span></td></tr>
+        <tr><td class="key">BU-serial-dates</td><td><span class="sev p3">P3</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Bulk Upload: DOB &amp; Hire Date as Excel serials rejected ("'36526' is not a valid date") &mdash; parser only accepts MM-DD-YYYY strings. Retest 02 Jun confirmed.</td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-83</span></td></tr>
+        <tr><td class="key">SN-66-FE011</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Workforce sidebar visible to non-admin users (RBAC not enforced client-side).<span class="why">Retest blocked: no non-admin account provisioned in Test TH Regional.</span></td><td><span class="st blocked">Blocked · needs non-admin acct</span></td><td><span class="jira">SNOPS-86</span></td></tr>
+        <tr><td class="key">SN-66-FE012</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum">HTTP 403 surfaces as misleading "Check your connection" banner.</td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-87</span></td></tr>
+        <tr><td class="key">SN-66-FE019</td><td><span class="sev p3">P3</span></td><td><span class="stg act">Activate</span></td><td class="sum">No success toast after Invite-a-person wizard submit (spec &sect;9.1.11).<span class="why">Retest blocked by SNOPS-99 &mdash; wizard submit 400s before any toast could appear.</span></td><td><span class="st blocked">Blocked · by SNOPS-99</span></td><td><span class="jira">SNOPS-89</span></td></tr>
+        <tr><td class="key">SN-66-FE020</td><td><span class="sev p3">P3</span></td><td><span class="stg act">Activate</span></td><td class="sum">CTA banner dismissal persists across logout in same tab (sessionStorage key survives logout/login).</td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-90</span></td></tr>
+        <tr><td class="key">SN-66-FE022</td><td><span class="sev p3">P3</span></td><td><span class="stg act">Activate</span></td><td class="sum">Bulk Send Invites modal says "7 days" but spec specifies 72h TTL.</td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-91</span></td></tr>
+        <tr><td class="key">SN-66-FE023</td><td><span class="sev p3">P3</span></td><td><span class="stg act">Activate</span></td><td class="sum">CTA banner copy missing count, differs from spec &sect;6.2.7.</td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-92</span></td></tr>
+        <tr><td class="key">SN-66-FE024</td><td><span class="sev p3">P3</span></td><td><span class="stg act">Activate</span></td><td class="sum">No success toast after Bulk Send Invites confirmation (bulk send itself works &mdash; 3&rarr;0 pending).</td><td><span class="st open">Open · confirmed 02 Jun</span></td><td><span class="jira">SNOPS-93</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-18-FE004</td><td><span class="sev p3">P3</span></td><td><span class="stg org">Organize</span></td><td class="sum">Add-member picker &mdash; now renders 50+ employees; error banner gone.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-59</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-26-FE007</td><td><span class="sev p3">P3</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Wrong sheet name silently accepted; no warn-and-proceed.</td><td><span class="st fixed">&#10004; Closed &middot; Jira Done</span></td><td><span class="jira">SNOPS-46</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-10-FE006</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Short Code helper &mdash; now reads "3&ndash;12 characters. Letters, numbers, and hyphens".</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-68</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-10-FE007</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">List subtitle &mdash; now exact spec wording.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-70</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-6-FE001</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Route &mdash; canonical is now <code>/settings/company-details</code>; old path redirects.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-77</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-6-FE003</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Cancel button &mdash; now disabled (with Save) during save-in-progress.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-78</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-2-FE003</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">"Type" column dropped and "Substitute day" column present on all three tabs.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 02 Jun</span></td><td><span class="jira">SNOPS-72</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-66-BE002</td><td><span class="sev p3">P3</span></td><td><span class="stg cfg">Config</span></td><td class="sum">Default GET excludes Inactive employees &mdash; spec §17 now documents the implicit filter.</td><td><span class="st fixed">&#10004; Closed &middot; 02 Jun</span></td><td><span class="jira">SNOPS-37</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label" style="margin-top:18px">02 Jun all-module retest delta <span class="sub">— 39 defects re-executed (For Review + Backlog), all 6 modules</span></div>
+  <div class="lead" style="border-left:3px solid var(--pass);padding-left:12px;background:#f0fdf4">
+    <strong>20 verified fixed</strong> (incl. 4 Backlog bugs fixed without ever reaching For Review: SNOPS-61, 82, 84, 85) &middot;
+    <strong>4 partial</strong> (SNOPS-43, 56, 63, 65) &middot; <strong>13 still open</strong> &middot; <strong>2 blocked</strong> (SNOPS-86 no non-admin account; SNOPS-89 blocked by new bug).
+    <strong style="color:var(--pass)">Time &amp; Leave is fully cleared</strong> — all 5 Holiday defects closed.
+    <strong style="color:var(--p1)">Counter:</strong> 1 new P1 filed — <strong>SNOPS-99</strong> (invite wizard submit 400 on <code>payrollRunGroupId</code>; invite creation hard-broken),
+    and SNOPS-41 perf <strong>regressed further</strong> (23.6s &rarr; 33.0s).
+    Jira hygiene: 20 bugs &rarr; Done; SNOPS-38, 41, 60, 65 &rarr; In Progress; retest evidence commented on all 39.
+    Full results: <code>docs/qa/retest/2026-06-02/</code>.
+  </div>
+
+  <div class="section-label">Recurring root causes <span class="sub">— fix the pattern, clear multiple defects &middot; struck = cleared on retest</span></div>
+  <div class="themes">
+    <div class="theme">
+      <h4>1. Silent error swallowing</h4>
+      <p>Front-ends hide backend 4xx/5xx &mdash; the user thinks an action succeeded when it failed. The 05 Jun regression found this is now cross-cutting: write-403s on Settings-save/lifecycle (SN-6/10/14) surface <em>no</em> toast at all.</p>
+      <div class="chips"><span class="key">XCUT-403</span><span class="key">SN-26-FE001</span><span class="key">SN-70-FE-H9</span><span class="key done">SN-10-FE001</span><span class="key done">SN-6-FE006</span></div>
+    </div>
+    <div class="theme">
+      <h4>2. Broken employee directory / search</h4>
+      <p>Mostly recovered: picker + preset URL fixed. Remaining residual is one hardcoded <code>pageSize=200</code> in the Groups rule-builder (closes SN-18-BE001 + FE005 together).</p>
+      <div class="chips"><span class="key">SN-18-BE001</span><span class="key">SN-18-FE005</span><span class="key done">SN-18-FE004</span><span class="key done">SN-66-FE004</span></div>
+    </div>
+    <div class="theme">
+      <h4>3. No "unsaved changes" guard</h4>
+      <p>Groups discard guard shipped; Company Details Cancel (P1), the bulk-upload entity-switch case, and now the R&amp;A wizard entity-switch all share the same data-loss pattern.</p>
+      <div class="chips"><span class="key">SN-6-FE004</span><span class="key">SN-26-FE010</span><span class="key">SN-70-FE-H6</span><span class="key done">SN-18-FE001</span></div>
+    </div>
+    <div class="theme" style="border-top-color:var(--p1)">
+      <h4>4. SoD / privilege-escalation gates missing (NEW)</h4>
+      <p>Roles &amp; Access ships without the separation-of-duties guards: self-assign of Org Admin is blocked by <em>neither</em> the UI nor the server (server 500s instead of a clean 422), and friction acknowledgements are case-insensitive / not reset. Security-priority fix-first.</p>
+      <div class="chips"><span class="key">SN-70-FE-H1</span><span class="key">SN-70-BE-H1</span><span class="key">SN-70-FE-H2</span><span class="key">SN-70-FE-H3</span></div>
+    </div>
+  </div>
+
+  <footer>
+    Sourced from the executed module standalone reports under <code>docs/qa/test-cases/&lt;SN&gt;/results/</code>,
+    the 2026-06-02 all-module defect retest (<code>docs/qa/retest/2026-06-02/</code>),
+    the SN-70 first-execution run (<code>docs/qa/test-cases/SN-70/results/2026-06-04_RUN-SUMMARY.md</code> &middot; <code>health-2026-06-04.md</code>),
+    and the 2026-06-05 full regression sweep (<code>docs/qa/curation/health-2026-06-05.md</code>).
+    SN-70 defects (FE-H1&ndash;H9, BE-H1/H2, 9 mediums) and the cross-cutting silent-403 bug remain unfiled.
+    Severities use the SNOPS P1&ndash;P4 scheme.
+  </footer>
+
+</main>
+</body>
+</html>
