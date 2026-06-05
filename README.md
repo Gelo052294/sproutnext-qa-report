@@ -31,14 +31,20 @@ Every later `git push` to `main` triggers a fresh deploy automatically.
 ## Refreshing the report ("live update")
 
 The HTML here is generated from the QA artifacts in the main
-`claude-agentic-qe` repo. To publish updated results:
+`claude-agentic-qe` repo. **First** update the status at the source
+(`/qa-test` runs regenerate module reports; `/qa-curate` regenerates the
+Executive dashboard). **Then** publish with a single command from the main
+repo root:
 
 ```bash
-# in the main claude-agentic-qe repo
-node scripts/build-qa-site.mjs      # regenerates qa-report-site/
-
-# then in this folder
-git add -A && git commit -m "Update QA report" && git push
+node scripts/publish-qa-site.mjs "Update QA status after SN-66 re-run"
 ```
 
-Vercel rebuilds and the live URL reflects the new data within ~30s.
+That one command:
+1. rebuilds `SproutNext_QA_Report_complete.html` (Executive + all 9 module tabs),
+2. refreshes this folder (`index.html` + `modules/`),
+3. commits and pushes → Vercel redeploys (~30s).
+
+Pass `--no-push` to build + commit locally without publishing. If you only
+changed files and want the copy step alone, `node scripts/build-qa-site.mjs`
+still works on its own.
