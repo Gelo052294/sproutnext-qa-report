@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en"><head><meta charset="utf-8"/>
 <title>SN-18 Groups QA Test Report</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -72,6 +72,112 @@ footer{max-width:1200px;margin:0 auto;padding:16px;color:var(--ink-dim);font-siz
   <div class="meta">Full execution &middot; Tester: <code>richardtest</code> (admin) &middot; Entity: Test TH Regional &middot; Environment: qa &middot; Run: 2026-05-29 &middot; Report: 2026-05-30</div>
 </header>
 <main>
+
+<!-- =================================================================
+     2026-06-05 REGRESSION RUN UPDATE
+     Admin: johnangelol@sprout.ph | Entity: Test TH Regional
+     Baseline: 2026-06-03_14-57.md (richardtest, QA Testing entity)
+     ================================================================= -->
+<section class="card" id="regression-2026-06-05" style="border-left:4px solid #2563eb">
+  <h2 style="display:flex;align-items:center;gap:10px">
+    <span style="background:#2563eb;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:6px;letter-spacing:.04em">REGRESSION RUN</span>
+    2026-06-05 Regression Update
+  </h2>
+  <p style="font-size:13px;color:var(--ink-dim);margin:0 0 14px">
+    <strong>Date:</strong> 2026-06-05 16:20&ndash;16:55 &middot;
+    <strong>Admin:</strong> johnangelol@sprout.ph (John Lavapiez) &middot;
+    <strong>Entity:</strong> Test TH Regional (<code>00000000-0000-0000-0000-0000000d0004</code>) &middot;
+    <strong>Env:</strong> qa &middot;
+    <strong>Baseline:</strong> 2026-06-03_14-57.md (richardtest)
+  </p>
+
+  <!-- Graded counts -->
+  <div class="summary-grid" style="margin-bottom:18px">
+    <div class="stat-tile pass"><div class="label">PASS</div><div class="value">30</div></div>
+    <div class="stat-tile fail"><div class="label">FAIL</div><div class="value">2</div></div>
+    <div class="stat-tile partial"><div class="label">PARTIAL</div><div class="value">1</div></div>
+    <div class="stat-tile blocked"><div class="label">BLOCKED</div><div class="value">6</div></div>
+    <div class="stat-tile"><div class="label">SKIP / API-deferred</div><div class="value" style="font-size:20px">21</div></div>
+    <div class="stat-tile"><div class="label">Total graded UI</div><div class="value" style="font-size:20px">39</div></div>
+    <div class="stat-tile pass"><div class="label">Pass rate</div><div class="value" style="font-size:20px">77%</div></div>
+  </div>
+
+  <!-- Fix confirmed -->
+  <h3 style="font-size:15px;margin:0 0 8px">Fix Confirmed (FAIL &rarr; PASS)</h3>
+  <div class="defect-list" style="margin-bottom:18px">
+    <article class="defect" style="background:#f0fdf4;border-left-color:var(--pass)">
+      <div class="defect-head">
+        <span class="pri" style="background:var(--pass)">FIX</span>
+        <code class="defect-key">TC-044</code>
+        <h3 style="margin:4px 0 0">Inactive&rarr;Active transition &mdash; <code>/reactivate</code> endpoint now deployed</h3>
+      </div>
+      <p>
+        Previously <strong>BLOCKED</strong> (endpoint not deployed). This run confirmed:
+        <code>POST /groups/{id}/reactivate =&gt; 200</code> (network request #220).
+        The <code>/reactivate</code> endpoint is live; deactivated_at is nulled correctly.
+        The earlier classification in the original report (SN-18-BE002 &mdash; &ldquo;reactivation works via UI only&rdquo;)
+        is now fully resolved &mdash; the dedicated REST verb also works.
+      </p>
+    </article>
+  </div>
+
+  <!-- New regression -->
+  <h3 style="font-size:15px;margin:0 0 8px">New Regression (PASS &rarr; FAIL)</h3>
+  <div class="defect-list" style="margin-bottom:18px">
+    <article class="defect p2">
+      <div class="defect-head">
+        <span class="pri p2">REGRESSION</span>
+        <code class="defect-key">TC-032</code>
+        <h3 style="margin:4px 0 0">AC-LP1 &mdash; Leave Policy picker returns HTTP 403 in Test TH Regional</h3>
+      </div>
+      <p>
+        <strong>Error:</strong> <code>GET /core/api/v1/leavepolicies?entityId=00000000-0000-0000-0000-0000000d0004&amp;statusId=2&amp;pageSize=50&amp;pageNumber=1</code>
+        returns <strong>403 Forbidden</strong>. The Leave Policy tab shows &ldquo;Policy list is temporarily unavailable.&rdquo;
+        Work Schedule tab loads correctly.
+      </p>
+      <p>
+        <strong>Root cause note:</strong> This 403 is an <strong>admin-permission artifact</strong> for the test account
+        (johnangelol / John Lavapiez) in Test TH Regional &mdash; johnangelol may not hold
+        <code>leave_policies:read</code> on entity <code>00000000-0000-0000-0000-0000000d0004</code>,
+        or BFF authorization for leave policies was tightened since the baseline run which used richardtest
+        in the QA Testing entity. <strong>This is NOT a confirmed product regression</strong>; verify with dev
+        whether johnangelol has the required leave policy permission on Test TH Regional.
+      </p>
+      <p><strong>Impact:</strong> TC-033 (link policy) also unverifiable via Leave Policy tab. TC-034 (unlink) partially verified via the Used By tab (existing work schedule links confirmed).</p>
+    </article>
+  </div>
+
+  <!-- Pre-existing issues -->
+  <h3 style="font-size:15px;margin:0 0 8px">Pre-existing Issues (Unchanged)</h3>
+  <table style="margin-bottom:10px">
+    <thead><tr><th>Key</th><th>Severity</th><th>TC(s)</th><th>Summary</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>SNOPS-60</code></td>
+        <td><span class="badge fail">High</span></td>
+        <td>TC-021, TC-022</td>
+        <td>Departments API: SPA sends <code>pageSize=200</code>; BFF max is 100 &rarr; HTTP 400 on every rule-builder open. Requests at <code>pageSize=100</code> return 200 correctly.</td>
+        <td>STILL OPEN</td>
+      </tr>
+      <tr>
+        <td><code>SNOPS-DB001</code></td>
+        <td><span class="badge partial">Medium</span></td>
+        <td>TC-013</td>
+        <td>No duplicate-name soft warning on blur in Create wizard / Settings name field.</td>
+        <td>STILL OPEN</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="summary-text" style="margin-top:6px">
+    <strong>Overall result: PARTIAL</strong> &mdash;
+    1 fix confirmed (TC-044 /reactivate now deployed) &middot;
+    1 regression flagged (TC-032 leave policy 403 &mdash; likely a johnangelol write-403 permission artifact, NOT a product regression) &middot;
+    2 pre-existing defects unchanged (SNOPS-60, SNOPS-DB001) &middot;
+    Pass rate 77% (30/39 graded UI TCs).
+    Source: <code>docs/qa/test-cases/SN-18/results/2026-06-05_regression.md</code>
+  </p>
+</section>
 
 <section class="card">
   <h2>Executive Summary</h2>

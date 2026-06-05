@@ -111,6 +111,77 @@
 
 <main>
 
+<!-- ============================================================
+     2026-06-05 REGRESSION UPDATE
+     ============================================================ -->
+<section class="card" style="border-left: 4px solid #16a34a; background: #f0fdf4;">
+  <h2 style="color: #15803d;">&#10003; Regression Update &mdash; 2026-06-05</h2>
+  <p style="font-size:13px; color:#5b6470; margin: -6px 0 14px 0;">
+    Run date: <strong>2026-06-05</strong> &middot; Entity: <strong>Test TH Regional</strong> (id <code>00000000-0000-0000-0000-0000000d0004</code>) &middot; Admin: <code>johnangelol@sprout.ph</code> &middot; Env: <code>qa</code>
+  </p>
+
+  <div class="summary-grid">
+    <div class="stat-tile pass"><div class="label">Pass</div><div class="value">32</div></div>
+    <div class="stat-tile fail"><div class="label">Fail</div><div class="value">2</div></div>
+    <div class="stat-tile partial"><div class="label">Partial</div><div class="value">8</div></div>
+    <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">9</div></div>
+    <div class="stat-tile deferred"><div class="label">Deferred</div><div class="value">12</div></div>
+    <div class="stat-tile pass"><div class="label">Graded Total</div><div class="value">42</div></div>
+    <div class="stat-tile pass"><div class="label">Pass Rate</div><div class="value" style="font-size:20px;">76.2%</div></div>
+  </div>
+
+  <h3 style="font-size:15px; margin: 18px 0 8px 0;">14 Confirmed Fixes</h3>
+  <p style="font-size:14px; color:#5b6470; margin: 0 0 10px 0;">
+    <strong>Test TH Regional now seeded with 18 TH national holidays</strong> (all <code>included=true</code>).
+    <strong>Company-holiday CRUD fully functional</strong> (create, edit, delete, view modal, history panel).
+  </p>
+  <table>
+    <thead>
+      <tr><th>TC</th><th>Prior Status</th><th>Current Status</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>TC-006</strong></td><td><span class="badge fail">FAIL</span></td><td><span class="badge pass">PASS</span></td><td>Was 0 rows / "Couldn't load holidays." error. Now 18 national rows load correctly.</td></tr>
+      <tr><td><strong>TC-008</strong></td><td><span class="badge fail">FAIL</span></td><td><span class="badge pass">PASS</span></td><td>Was FAIL (SN2-FE003: TYPE column present). Now no TYPE column in National table.</td></tr>
+      <tr><td><strong>TC-009</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Was blocked (no seeded rows). Visakha Bucha substitute "2026-06-01" confirmed.</td></tr>
+      <tr><td><strong>TC-010</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Above-floor exclusion without waiver modal confirmed.</td></tr>
+      <tr><td><strong>TC-011</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Below-floor waiver modal with correct math (Floor:14, Proposed:13, Shortfall:1).</td></tr>
+      <tr><td><strong>TC-012</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Waiver gate logic (20 chars + both acks) confirmed.</td></tr>
+      <tr><td><strong>TC-014</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Re-include confirm dialog and banner revert confirmed.</td></tr>
+      <tr><td><strong>TC-016</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Waiver view modal — all fields read-only, ref/concept/signer/timestamp visible.</td></tr>
+      <tr><td><strong>TC-019</strong></td><td><span class="badge fail">FAIL</span></td><td><span class="badge pass">PASS</span></td><td>Was FAIL (SN2-BE001 save error). Company holiday creates successfully.</td></tr>
+      <tr><td><strong>TC-026</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Edit via View modal flip-to-edit — saves new version confirmed.</td></tr>
+      <tr><td><strong>TC-028</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>Delete confirm dialog and row removal confirmed.</td></tr>
+      <tr><td><strong>TC-029</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>No kebab on national rows confirmed.</td></tr>
+      <tr><td><strong>TC-030</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>View modal opens for National and Company tabs.</td></tr>
+      <tr><td><strong>TC-031</strong></td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge pass">PASS</span></td><td>History panel — "Created by admin" on fresh row; audit entries on toggle changes.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size:15px; margin: 18px 0 8px 0;">Persisting Defects</h3>
+  <table>
+    <thead>
+      <tr><th>Key</th><th>TC</th><th>Severity</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="defect-key" style="background:#1a1d21;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;">SN2-FE004</code></td>
+        <td>TC-032</td>
+        <td><span class="pri p3" style="background:#6b7280;color:#fff;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:700;">Low</span></td>
+        <td>National View modal footer wording: <em>"Statutory holiday — managed by PolicyCore. Toggle off to exclude."</em> vs spec HOL-7.7.5 <em>"Use the Include toggle in the table to exclude this holiday."</em> — intent matches; recommend spec acceptance or copy update.</td>
+      </tr>
+      <tr>
+        <td><code class="defect-key" style="background:#1a1d21;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;">SN2-FE005</code></td>
+        <td>TC-052</td>
+        <td><span class="pri p2" style="background:#c2410c;color:#fff;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:700;">Medium</span></td>
+        <td>Kebab Duplicate action renders with <code>aria-disabled="true"</code> on all Company holiday rows. Expected: opens Create modal pre-filled with "Copy of [name]" (spec HOL-6.8.2). Persists across both runs.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+<!-- ============================================================
+     END 2026-06-05 REGRESSION UPDATE
+     ============================================================ -->
+
 <section class="card">
   <h2>Executive Summary</h2>
   <div class="summary-grid">

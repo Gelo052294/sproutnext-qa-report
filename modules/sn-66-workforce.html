@@ -1158,6 +1158,125 @@
   </ol>
 </section>
 
+<!-- ============================================================
+     REGRESSION UPDATE — 2026-06-05
+     Source: docs/qa/test-cases/SN-66/results/2026-06-05_regression.md
+     ============================================================ -->
+<section class="card" style="border-top: 3px solid #2563eb;">
+  <h2 style="color:#1d4ed8;">&#x1F501; Regression Run &mdash; 2026-06-05</h2>
+  <p class="summary-text" style="margin-top:0;">
+    Fifth-pass regression run. Entity: <strong>Test TH Regional</strong> (<code>00000000-0000-0000-0000-0000000d0004</code>, 150 employees).
+    Tester: <strong>johnangelol@sprout.ph</strong> (John Lavapiez, admin).
+    Baseline compared: 2026-06-03 run (richardtest / QA Testing entity).
+    API TCs and mocking-dependent TCs deferred (auth client unset).
+  </p>
+
+  <div class="summary-grid">
+    <div class="stat-tile"><div class="label">TCs Reached</div><div class="value">50 / 85</div></div>
+    <div class="stat-tile pass"><div class="label">PASS</div><div class="value" style="color:var(--pass);">24</div></div>
+    <div class="stat-tile fail"><div class="label">FAIL</div><div class="value" style="color:var(--fail);">3</div></div>
+    <div class="stat-tile partial"><div class="label">PARTIAL</div><div class="value" style="color:var(--partial);">4</div></div>
+    <div class="stat-tile blocked"><div class="label">BLOCKED</div><div class="value" style="color:var(--blocked);">2</div></div>
+    <div class="stat-tile"><div class="label">DEFERRED</div><div class="value">17</div></div>
+  </div>
+
+  <p class="summary-text">
+    <strong>Pass rate (excl. deferred):</strong> 24 / 33 = <strong>73%</strong> &nbsp;&bull;&nbsp;
+    <strong>Coverage this pass:</strong> 50 / 85 TCs evaluated (59%).
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">Product Regressions vs 2026-06-03 Baseline</h3>
+  <p class="summary-text" style="border-left:3px solid var(--pass);padding-left:12px;background:#f0fdf4;">
+    <strong>No new product regressions.</strong> All previously-PASS TCs remain PASS in this entity. Two TCs were reclassified (TC-011 and TC-029: PARTIAL &rarr; FAIL) based on sharper confirmation of the &ldquo;Resend invite&rdquo; label defect &mdash; this is a documentation change, not a product regression.
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">Fixes Confirmed vs Baseline</h3>
+  <p class="summary-text" style="border-left:3px solid var(--blocked);padding-left:12px;background:#f9fafb;">
+    <strong>No new fixes confirmed.</strong> All previously-open defects persist in this run.
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">Persisting Defects</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Finding</th>
+        <th>Status</th>
+        <th>TC(s)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="defect-key">SNOPS-93</span></td>
+        <td>No success toast after bulk send invites &mdash; confirmed: Vk Virata re-invited, no toast shown</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-025</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SNOPS-88</span></td>
+        <td>Dual-status model &mdash; 9 columns in table (separate &ldquo;Invite&rdquo; col + dual &ldquo;Status&rdquo; col)</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-004, TC-007, TC-015</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SNOPS-92</span></td>
+        <td>Banner copy mismatch &mdash; &ldquo;Some invites have expired.&rdquo; (no count, wrong wording)</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-006</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SNOPS-91</span></td>
+        <td>Bulk send invite modal says &ldquo;7 days&rdquo; not &ldquo;72 hours&rdquo; &mdash; confirmed in modal</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-023</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SN-66-FE-NEW-01</span></td>
+        <td>Self-deactivate guard absent &mdash; own row (John Lavapiez) included in deactivate modal without guard</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-003</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SN-66-FE-NEW-02</span></td>
+        <td>invite_expired row kebab shows &ldquo;Resend invite&rdquo; not &ldquo;Send invite&rdquo; per spec</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-011, TC-029, TC-046</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;font-size:15px;">Write-Permission Note</h3>
+  <p class="summary-text">
+    johnangelol did <strong>not</strong> encounter 403 errors on mutations tested this run. The bulk send invite for <strong>Vk Virata</strong> (kvirata@sprout.ph) completed successfully (<code>invite_expired</code> &rarr; <code>invited</code>) via TC-025. The prior write-403 issue may be entity-specific or timing-dependent.
+    <em>Data mutated this run:</em> Vk Virata re-invited (TC-025 / SNOPS-93 retest) &mdash; reversible via TTL expiry.
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">TC Status Delta vs 2026-06-03</h3>
+  <table>
+    <thead>
+      <tr><th>TC</th><th>Baseline (2026-06-03)</th><th>2026-06-05</th><th>Delta</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>TC-001</td><td><span class="badge pass">PASS</span></td><td><span class="badge pass">PASS</span></td><td>Unchanged</td></tr>
+      <tr><td>TC-003</td><td><span class="badge fail">FAIL</span></td><td><span class="badge fail">FAIL</span></td><td>Unchanged (SN-66-FE-NEW-01 persists)</td></tr>
+      <tr><td>TC-004</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Unchanged (SNOPS-88 persists)</td></tr>
+      <tr><td>TC-006</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Unchanged (SNOPS-92 persists); no pending banner (0 pending in entity)</td></tr>
+      <tr><td>TC-011</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge fail">FAIL</span></td><td>Reclassified &mdash; &ldquo;Resend invite&rdquo; label confirmed more precisely</td></tr>
+      <tr><td>TC-015</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Unchanged (SNOPS-88 persists)</td></tr>
+      <tr><td>TC-021</td><td><span class="badge fail">FAIL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Changed &mdash; wizard accessible but SNOPS-99 still unverifiable via full completion</td></tr>
+      <tr><td>TC-023</td><td><span class="badge pass">PASS</span></td><td><span class="badge pass">PASS</span></td><td>Unchanged (SNOPS-91 modal &ldquo;7 days&rdquo; noted)</td></tr>
+      <tr><td>TC-025</td><td><span class="badge fail">FAIL</span></td><td><span class="badge fail">FAIL</span></td><td>Unchanged (SNOPS-93 persists)</td></tr>
+      <tr><td>TC-029</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge fail">FAIL</span></td><td>Reclassified &mdash; confirmed in Test TH Regional entity</td></tr>
+    </tbody>
+  </table>
+
+  <p class="summary-text" style="margin-top:14px;font-size:13px;color:#5b6470;font-style:italic;">
+    Source: <code>docs/qa/test-cases/SN-66/results/2026-06-05_regression.md</code> &middot;
+    Admin: johnangelol@sprout.ph &middot; Entity: Test TH Regional &middot;
+    Screenshots prefix: <code>REGRESS-0605-*</code>
+  </p>
+</section>
+
 </main>
 
 <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightbox-img" alt=""></div>
