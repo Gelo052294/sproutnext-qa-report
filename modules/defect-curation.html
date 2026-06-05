@@ -122,19 +122,19 @@
     <strong>05 Jun — SN-62 (Clock In/Out chip) synced.</strong> Functional core works (chip deployed; admin can clock in/out). <strong>5 FE defects</strong> added to this curation under the <em>Manage</em> stage (daily attendance): <code>SN-62-FE-NEW-001</code> P1 i18n Hard Lock (TC-083), <code>SN-62-FE-NEW-002</code> P2 dismiss-on-outside-click / <code>module:dismissPopovers</code> (TC-009), and three P3 polish items (<code>-003</code> animation TC-081, <code>-004</code> hover elevation TC-080, <code>-005</code> role-badge spec-ref TC-090). <em>Environment caveat (NOT a defect):</em> SN-62's remaining TCs are blocked because <code>gelosprout2</code>/<code>gelosprout3</code> carry the admin role (not employee/manager) &rarr; HTTP 403 on Clock In (missing <code>attendance.own.clock</code> scope). Reprovision roles to unblock the active/done-state TCs.
   </div>
 
-  <div class="section-label">At a glance <span class="sub">— reconciled to <code>_snapshot.json</code> &middot; 102 total / 77 open / 25 verified-fixed across all 11 modules</span></div>
+  <div class="section-label">At a glance <span class="sub">— Jira SNOPS ground truth &middot; 95 total / 38 open / 57 Done across all 11 modules</span></div>
   <div class="lead" style="border-left-color:var(--p1);background:#fff;margin:0 0 14px">
     <strong>77 open defects across all modules</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
     deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full 89-row inventory.
-    The full counts trace to <code>docs/qa/curation/_snapshot.json</code> (102 total &middot; 77 open &middot; 25 verified-fixed).
+    The full counts trace to Jira project SNOPS (95 filed bugs &middot; 57 Done &middot; 38 open). Note: QA-found defects not yet filed in Jira are not counted here.
   </div>
   <div class="kpis">
-    <div class="kpi"><div class="l">Total defects</div><div class="v">102</div><div class="n">all 11 modules &middot; 77 open + 25 verified-fixed</div></div>
-    <div class="kpi"><div class="l">Open defects</div><div class="v">77</div><div class="n">P1 8 + P2 38 + P3/Med 31 = 77</div></div>
+    <div class="kpi"><div class="l">Total defects</div><div class="v">95</div><div class="n">Jira SNOPS &middot; 57 Done + 38 open</div></div>
+    <div class="kpi"><div class="l">Open defects</div><div class="v">38</div><div class="n">filed: Backlog 30 + In Progress 3 + For Review 5</div></div>
     <div class="kpi p1"><div class="l">P1 (critical)</div><div class="v">8</div><div class="n">incl. 2 SN-70 backend, +1 SN-62 i18n Hard Lock</div></div>
     <div class="kpi p2"><div class="l">P2 (high)</div><div class="v">38</div><div class="n">incl. SN-70 FE-H, silent-403, +1 SN-62</div></div>
     <div class="kpi p3"><div class="l">P3 / Med</div><div class="v">31</div><div class="n">incl. SN-70 mediums, +3 SN-62 polish</div></div>
-    <div class="kpi"><div class="l">Verified fixed</div><div class="v" style="color:var(--pass)">25</div><div class="n">per curation tables (incl. Jira Done)</div></div>
+    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">57</div><div class="n">Jira SNOPS status = Done</div></div>
   </div>
 
   <div class="section-label">Where it hurts on the journey <span class="sub">— open defect count &middot; P1 count per stage &middot; post-retest</span></div>
