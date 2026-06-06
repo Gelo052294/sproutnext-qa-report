@@ -92,7 +92,7 @@
 <header>
   <h1>SproutNext — Defect Curation</h1>
   <div class="meta">
-    Employee-journey focus &middot; Environment: <code>qa</code> &middot; entity <code>QA Testing</code> &middot; Curated 2026-06-01 &middot; <strong>Refreshed 2026-06-05 — SN-70 first execution + SN-62 defects + full regression; reconciled to _snapshot.json</strong>
+    Employee-journey focus &middot; Environment: <code>qa</code> &middot; entity <code>QA Testing</code> &middot; Curated 2026-06-01 &middot; <strong>Refreshed 2026-06-06 — RBAC-wiring full regression; new RBAC leaks (NEW-BE-H3, NEW-0606-01, Gender-to-Manager); reconciled to _snapshot.json</strong>
   </div>
 </header>
 
@@ -122,19 +122,19 @@
     <strong>05 Jun — SN-62 (Clock In/Out chip) synced.</strong> Functional core works (chip deployed; admin can clock in/out). <strong>5 FE defects</strong> added to this curation under the <em>Manage</em> stage (daily attendance): <code>SN-62-FE-NEW-001</code> P1 i18n Hard Lock (TC-083), <code>SN-62-FE-NEW-002</code> P2 dismiss-on-outside-click / <code>module:dismissPopovers</code> (TC-009), and three P3 polish items (<code>-003</code> animation TC-081, <code>-004</code> hover elevation TC-080, <code>-005</code> role-badge spec-ref TC-090). <em>Environment caveat (NOT a defect):</em> SN-62's remaining TCs are blocked because <code>gelosprout2</code>/<code>gelosprout3</code> carry the admin role (not employee/manager) &rarr; HTTP 403 on Clock In (missing <code>attendance.own.clock</code> scope). Reprovision roles to unblock the active/done-state TCs.
   </div>
 
-  <div class="section-label">At a glance <span class="sub">— Jira SNOPS ground truth &middot; 95 total / 38 open / 57 Done across all 11 modules</span></div>
+  <div class="section-label">At a glance <span class="sub">— reconciled to _snapshot.json (2026-06-06) &middot; 104 total / 43 open / 61 Done across all 11 modules</span></div>
   <div class="lead" style="border-left-color:var(--p1);background:#fff;margin:0 0 14px">
-    <strong>77 open defects across all modules</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
-    deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full 89-row inventory.
-    The full counts trace to Jira project SNOPS (95 filed bugs &middot; 57 Done &middot; 38 open). Note: QA-found defects not yet filed in Jira are not counted here.
+    <strong>43 open defects across all modules (+5 vs 2026-06-05)</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
+    deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full inventory.
+    The full counts trace to <code>_snapshot.json</code> (104 distinct &middot; 61 Done &middot; 43 open). The 2026-06-06 RBAC-wiring run added <strong>9 new defects</strong> (NEW-BE-H3, NEW-0606-01, Gender-to-Manager + 2 SN-22, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and <strong>verified 4 fixed</strong> (SN-70 FE-M3/FE-M5, SN-2 SN2-FE004/FE005).
   </div>
   <div class="kpis">
-    <div class="kpi"><div class="l">Total defects</div><div class="v">95</div><div class="n">Jira SNOPS &middot; 57 Done + 38 open</div></div>
-    <div class="kpi"><div class="l">Open defects</div><div class="v">38</div><div class="n">filed: Backlog 30 + In Progress 3 + For Review 5</div></div>
-    <div class="kpi p1"><div class="l">P1 (critical)</div><div class="v">8</div><div class="n">incl. 2 SN-70 backend, +1 SN-62 i18n Hard Lock</div></div>
-    <div class="kpi p2"><div class="l">P2 (high)</div><div class="v">38</div><div class="n">incl. SN-70 FE-H, silent-403, +1 SN-62</div></div>
-    <div class="kpi p3"><div class="l">P3 / Med</div><div class="v">31</div><div class="n">incl. SN-70 mediums, +3 SN-62 polish</div></div>
-    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">57</div><div class="n">Jira SNOPS status = Done</div></div>
+    <div class="kpi"><div class="l">Total defects</div><div class="v">104 <span style="font-size:15px;color:var(--ink-dim)">(+9)</span></div><div class="n">_snapshot.json &middot; 61 Done + 43 open</div></div>
+    <div class="kpi"><div class="l">Open defects</div><div class="v">43 <span style="font-size:15px;color:var(--ink-dim)">(+5)</span></div><div class="n">P1 13 + P2 19 + P3 11 = 43</div></div>
+    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">13 <span style="font-size:15px;color:var(--ink-dim)">(+5)</span></div><div class="n">+NEW-BE-H3, NEW-0606-01, Gender-to-Manager, SN-10 FE012/FE013</div></div>
+    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">19 <span style="font-size:15px;color:var(--ink-dim)">(+3)</span></div><div class="n">+TC-081 tax, TC-044 address, SN-26 TC-044 retry</div></div>
+    <div class="kpi p3"><div class="l">P3 / Med — open</div><div class="v">11 <span style="font-size:15px;color:var(--ink-dim)">(-3)</span></div><div class="n">+RBAC-HOL-001; −FE-M3/FE-M5/SN2-FE004/FE005 fixed</div></div>
+    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">61 <span style="font-size:15px;color:var(--ink-dim)">(+4)</span></div><div class="n">_snapshot.json defectsClosed</div></div>
   </div>
 
   <div class="section-label">Where it hurts on the journey <span class="sub">— open defect count &middot; P1 count per stage &middot; post-retest</span></div>
@@ -142,7 +142,7 @@
     <div class="jstage found">
       <div class="step">STEP 1</div><div class="nm">Foundation</div>
       <div class="mod">Entities (SN-10) &middot; Company (SN-6)</div>
-      <div class="cnt"><b>4</b> open &middot; <span class="p1n">1 P1</span> &middot; <span style="color:var(--pass);font-weight:700">+10 closed</span></div>
+      <div class="cnt"><b>4</b> open &middot; <span class="p1n">2 P1</span> &middot; <span style="color:var(--ink-dim);font-weight:500">+2 SN-10 NEW (FE012/FE013)</span></div>
     </div>
     <div class="jstage onb">
       <div class="step">STEP 2 &middot; HOTTEST</div><div class="nm">Onboard</div>
@@ -151,8 +151,8 @@
     </div>
     <div class="jstage manage">
       <div class="step">STEP 3</div><div class="nm">Manage &amp; Find</div>
-      <div class="mod">Workforce (SN-66) &middot; Roles &amp; Access (SN-70) &middot; Clock In/Out (SN-62)</div>
-      <div class="cnt"><b>25</b> open &middot; <span class="p1n">3 P1</span> &middot; <span style="color:var(--ink-dim);font-weight:500">+10 SN-70 (1 P1 + 9 FE-H), +5 SN-62 (1 P1 + 1 P2 + 3 P3)</span></div>
+      <div class="mod">Workforce (SN-66) &middot; Roles &amp; Access (SN-70) &middot; Clock In/Out (SN-62) &middot; Profile (SN-22)</div>
+      <div class="cnt"><b>25</b> open &middot; <span class="p1n">3 P1 NEW</span> &middot; <span style="color:var(--ink-dim);font-weight:500">NEW-BE-H3 (cross-entity), NEW-0606-01 (Mgr scope), Gender-to-Mgr; +TC-081/TC-044 P2</span></div>
     </div>
     <div class="jstage org">
       <div class="step">STEP 4</div><div class="nm">Organize</div>
@@ -160,18 +160,23 @@
       <div class="cnt"><b>4</b> open &middot; <span class="p1n">2 P1</span> &middot; <span style="color:var(--ink-dim);font-weight:500">+1 SN-70 BE-H2, +1 silent-403</span> &middot; <span style="color:var(--pass);font-weight:700">+3 closed</span></div>
     </div>
     <div class="jstage leave">
-      <div class="step">STEP 5 &middot; CLEARED</div><div class="nm">Time &amp; Leave</div>
+      <div class="step">STEP 5 &middot; NEAR-CLEAR</div><div class="nm">Time &amp; Leave</div>
       <div class="mod">Holiday (SN-2)</div>
-      <div class="cnt"><b>0</b> open &middot; <span style="color:var(--pass);font-weight:700">+3 verified</span> <span style="color:var(--ink-dim);font-weight:500">(all 5 now closed)</span></div>
+      <div class="cnt"><b>1</b> open &middot; <span style="color:var(--ink-dim);font-weight:500">RBAC-HOL-001 (P3 sidebar)</span> &middot; <span style="color:var(--pass);font-weight:700">+2 fixed (FE004/FE005)</span></div>
     </div>
   </div>
 
   <div class="section-label">Tier 1 &mdash; Fix first <span class="sub">— P1s sitting directly on the hire-to-active path</span></div>
   <div class="tier t1">
-    <h3>🚨 Critical &amp; on the employee journey <span class="hint">12 defects &middot; +2 SN-70 backend P1 + 1 SN-62 P1 (NOT FILED) &middot; 1 withdrawn &middot; 4 closed</span></h3>
+    <h3>🚨 Critical &amp; on the employee journey <span class="hint">+5 NEW (2026-06-06) RBAC leaks &middot; 1 withdrawn &middot; 4 closed</span></h3>
     <table>
       <thead><tr><th>#</th><th>Defect</th><th>Sev</th><th>Stage</th><th>What breaks &amp; why it matters</th><th>Status</th><th>Jira</th></tr></thead>
       <tbody>
+        <tr style="background:#fef2f2"><td>★</td><td class="key">NEW-BE-H3</td><td><span class="sev p1">Critical</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum"><strong>NEW 06 Jun · RBAC cross-entity leak:</strong> Entity-Admin (johnangelol / Acme SG Central) can read and manage employees <strong>across other entities</strong> — not scoped to its own entity.<span class="why">Data-isolation breach: an entity admin sees/edits tenants they shouldn't. Corroborated by SN-10 FE013 (entity-admin over-grant). Highest-priority security fix.</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fef2f2"><td>★</td><td class="key">NEW-0606-01</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW 06 Jun · SN-66:</strong> Manager Workforce list <strong>not team-scoped</strong> — TC-002 (now runnable) shows a Manager sees the full entity roster instead of only direct reports.<span class="why">RBAC scope gap revealed once role accounts were provisioned. Manager-lens over-exposure of the people directory.</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fef2f2"><td>★</td><td class="key">SN-22-TC-031</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW 06 Jun · Gender-to-Manager:</strong> Manager lens exposes an employee's <strong>Gender</strong> (and sensitive personal field) it should not see.<span class="why">Field-level RBAC over-exposure on the employee record; privacy concern. Pairs with TC-081 (tax) / TC-044 (address) P2s below.</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fef2f2"><td>★</td><td class="key">SN-10-FE012</td><td><span class="sev p1">P1</span></td><td><span class="stg found">Foundation</span></td><td class="sum"><strong>NEW 06 Jun · SN-10:</strong> Entity-create blocked for the expected admin path (create flow rejects/blocks).<span class="why">Foundation step regression — onboarding a new legal entity is impeded.</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fef2f2"><td>★</td><td class="key">SN-10-FE013</td><td><span class="sev p1">P1</span></td><td><span class="stg org">Organize</span></td><td class="sum"><strong>NEW 06 Jun · SN-10:</strong> Entity-Admin over-grant — the entity-admin role is granted broader scope than its entity.<span class="why"><strong>Corroborates NEW-BE-H3</strong> (cross-entity leak) from the SN-10 lens. Treat together as one RBAC-scoping fix.</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
         <tr style="opacity:0.55;text-decoration:line-through"><td>—</td><td class="key">SN-26-NEW-001</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum"><strong>WITHDRAWN:</strong> the 08:45 valid-upload 500 was a transient BFF outage.<span class="why">Did not reproduce at 12:50 (returned 201). Not a real defect; SN-26 needs a clean re-run for accurate numbers.</span></td><td><span class="st fixed">Withdrawn · transient</span></td><td><span class="jira">n/a</span></td></tr>
         <tr><td>1</td><td class="key">SN-26-FE001</td><td><span class="sev p1">P1</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Upload submit handler silently swallows backend 400 errors.<span class="why">Onboarding can fail with zero feedback &mdash; the user believes employees were created when they weren't. 5th retest cycle failed 03 Jun.</span></td><td><span class="st open">Open · 5th retest failed</span></td><td><span class="jira">SNOPS-38</span></td></tr>
         <tr><td>2</td><td class="key">SN-66-FE026</td><td><span class="sev p1">P1</span></td><td><span class="stg act">Activate</span></td><td class="sum"><strong>NEW 02 Jun:</strong> Invite-a-person wizard submit hard-broken &mdash; POST <code>/workforce/employees/invite</code> &rarr; 400 <code>payrollRunGroupId not a Guid</code>; wizard has no such field.<span class="why">Single-employee invite creation is fully down; FE/BE contract drift from the Run Groups work. Also blocks SNOPS-89 retest.</span></td><td><span class="st open">Open · new 02 Jun</span></td><td><span class="jira">SNOPS-99</span></td></tr>
@@ -226,10 +231,13 @@
 
   <div class="section-label">Tier 3 &mdash; High (open P2) <span class="sub">— journey-relevant items listed first</span></div>
   <div class="tier t3">
-    <h3>🟠 P2 <span class="hint">22 defects &middot; 14 still open &middot; 8 closed</span></h3>
+    <h3>🟠 P2 <span class="hint">+3 NEW (2026-06-06) &middot; 19 open total</span></h3>
     <table>
       <thead><tr><th>Defect</th><th>Sev</th><th>Stage</th><th>Summary</th><th>Status</th><th>Jira</th></tr></thead>
       <tbody>
+        <tr style="background:#fffbeb"><td class="key">SN-22-TC-081</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW 06 Jun · SN-22:</strong> Tax/SSF detail exposed to the Manager lens (tax-to-employee over-exposure) — field-level RBAC leak on the employee record.<span class="why">Same RBAC field-scoping class as Gender-to-Manager (TC-031, P1).</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fffbeb"><td class="key">SN-22-TC-044</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW 06 Jun · SN-22:</strong> Address field editable where it should be read-only for the current lens (address-editable).<span class="why">Write-scope gap on the employee record.</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fffbeb"><td class="key">SN-26-TC-044</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum"><strong>NEW 06 Jun · SN-26 regression:</strong> "Fix and retry" path regressed this run (retry regression on the failed-import flow).<span class="why">Previously-working retry no longer behaves; re-file/track as a regression.</span></td><td><span class="st regress">Open · regressed 06 Jun</span></td><td><span class="jira">to file</span></td></tr>
         <tr><td class="key">SN-62-FE-NEW-002</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> Clock chip doesn't subscribe to <code>module:dismissPopovers</code> postMessage; panel stays open after broadcast (cross-module dismiss coordination broken).<span class="why">Spec [CC-10.3]. TC-009.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
         <tr><td class="key">SN-26-FE010</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum">Entity switch with a file loaded: no discard-confirmation modal (data-loss risk).</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
         <tr><td class="key">SN-26-FE012</td><td><span class="sev p2">P2</span></td><td><span class="stg onb">Onboard</span></td><td class="sum"><code>below_min_wage</code> error not surfaced for a Base Rate under the floor.</td><td><span class="st open">Open · not filed</span></td><td><span class="jira">to file</span></td></tr>
@@ -258,11 +266,14 @@
 
   <div class="section-label">Tier 4 &mdash; Low (open P3) <span class="sub">— cosmetic, copy, or intended-behaviour</span></div>
   <div class="tier t4">
-    <h3>🟡 P3 / Medium <span class="hint">21 P3 (13 open, +3 SN-62) + 9 SN-70 mediums (grouped)</span></h3>
+    <h3>🟡 P3 / Medium <span class="hint">+1 NEW (RBAC-HOL-001) &middot; SN2-FE004/FE005 FIXED &middot; 11 P3 open</span></h3>
     <table>
       <thead><tr><th>Defect</th><th>Sev</th><th>Stage</th><th>Summary</th><th>Status</th><th>Jira</th></tr></thead>
       <tbody>
-        <tr><td class="key">SN-70-MED &times;9</td><td><span class="sev p3">Med</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum"><strong>SN-70 medium cluster (04 Jun, grouped):</strong> <code>BE-M1</code> batch-get wire contract (key <code>items</code> not <code>identities</code>; field-level errors not <code>ROLES_*</code> enums) · <code>FE-M1</code> DPO/Auditor confidential fields show ✓ where ✗ expected (<em>gated on Appendix A sign-off — re-validate</em>) · <code>FE-M2</code> discard prompt on empty draft · <code>FE-M3</code> bulk "Assign role" loads 0 people · <code>FE-M4</code> tile strip all zeros + N+1 fetches · <code>FE-M5</code> People-tab search updates URL but doesn't filter · <code>FE-M6</code> Compare modal a11y (focus-trap leak, ESC no-close) · <code>FE-M7</code> audit <code>module:navigate</code> missing <code>target_role</code> · <code>FE-M8</code> audit deep-link info toast absent.<span class="why">All open / NOT FILED. Source: 2026-06-04_RUN-SUMMARY.md.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="background:#fffbeb"><td class="key">RBAC-HOL-001</td><td><span class="sev p3">P3</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum"><strong>NEW 06 Jun · SN-2:</strong> Holiday sidebar/nav item visibility not RBAC-gated for the lens (sidebar visibility).<span class="why">Minor RBAC nav leak; module is otherwise clean (0 active defects this run).</span></td><td><span class="st open">Open · NEW · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-2-FE004</td><td><span class="sev p3">P3</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum">National View modal copy off-spec — verified corrected.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 06 Jun</span></td><td><span class="jira">SNOPS</span></td></tr>
+        <tr style="opacity:0.6;text-decoration:line-through"><td class="key">SN-2-FE005</td><td><span class="sev p3">P3</span></td><td><span class="stg leave">Time &amp; Leave</span></td><td class="sum">Company "Duplicate" kebab action disabled — now enabled/working.</td><td><span class="st fixed">&#10004; Fixed &middot; verified 06 Jun</span></td><td><span class="jira">SNOPS</span></td></tr>
+        <tr><td class="key">SN-70-MED &times;9</td><td><span class="sev p3">Med</span></td><td><span class="stg manage">Manage</span> <span class="stg org">Organize</span></td><td class="sum"><strong>SN-70 medium cluster (04 Jun, grouped):</strong> <code>BE-M1</code> batch-get wire contract (key <code>items</code> not <code>identities</code>; field-level errors not <code>ROLES_*</code> enums) · <code>FE-M1</code> DPO/Auditor confidential fields show ✓ where ✗ expected (<em>gated on Appendix A sign-off — re-validate</em>) · <code>FE-M2</code> discard prompt on empty draft · <strong style="color:var(--pass)"><s>FE-M3</s> bulk "Assign role" loads 0 people — <span style="text-decoration:none">FIXED 06 Jun</span></strong> · <code>FE-M4</code> tile strip all zeros + N+1 fetches · <strong style="color:var(--pass)"><s>FE-M5</s> People-tab search updates URL but doesn't filter — <span style="text-decoration:none">FIXED 06 Jun</span></strong> · <code>FE-M6</code> Compare modal a11y (focus-trap leak, ESC no-close) · <code>FE-M7</code> audit <code>module:navigate</code> missing <code>target_role</code> · <code>FE-M8</code> audit deep-link info toast absent.<span class="why">7 open / NOT FILED; FE-M3 + FE-M5 verified FIXED on 2026-06-06 (TC-015 bulk pre-load, TC-062 search filter). Source: 2026-06-06_fullreg.md.</span></td><td><span class="st partial">7 open · 2 fixed</span></td><td><span class="jira">to file</span></td></tr>
         <tr><td class="key">SN-62-FE-NEW-003</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> Panel animation uses <code>enter</code> at <code>0.15s</code>; spec requires <code>clockPanelIn</code> at <code>0.2s</code> (cosmetic spec drift). <span class="why">TC-081.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
         <tr><td class="key">SN-62-FE-NEW-004</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> No <code>hover:-translate-y-px</code> elevation on chip hover (color-only feedback); spec requires <code>translateY(-1px)</code>. <span class="why">TC-080.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">to file</span></td></tr>
         <tr><td class="key">SN-62-FE-NEW-005</td><td><span class="sev p3">P3</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>NEW · SN-62:</strong> Role-badge <code>&lt;status&gt;</code> element on topbar missing <code>data-spec-ref</code> (location selector spec-ref added between runs; badge remains). <span class="why">TC-090, partial fix observed.</span></td><td><span class="st partial">Open · partial</span></td><td><span class="jira">to file</span></td></tr>
@@ -317,18 +328,16 @@
       <div class="chips"><span class="key">SN-6-FE004</span><span class="key">SN-26-FE010</span><span class="key">SN-70-FE-H6</span><span class="key done">SN-18-FE001</span></div>
     </div>
     <div class="theme" style="border-top-color:var(--p1)">
-      <h4>4. SoD / privilege-escalation gates missing (NEW)</h4>
-      <p>Roles &amp; Access ships without the separation-of-duties guards: self-assign of Org Admin is blocked by <em>neither</em> the UI nor the server (server 500s instead of a clean 422), and friction acknowledgements are case-insensitive / not reset. Security-priority fix-first.</p>
-      <div class="chips"><span class="key">SN-70-FE-H1</span><span class="key">SN-70-BE-H1</span><span class="key">SN-70-FE-H2</span><span class="key">SN-70-FE-H3</span></div>
+      <h4>4. RBAC scope &amp; SoD gates missing (HOTTEST 06 Jun)</h4>
+      <p>The RBAC-wiring run enforced role gates but exposed <strong>scoping leaks</strong>: Entity-Admin reads across entities (NEW-BE-H3, corroborated by SN-10 FE013), Manager Workforce list not team-scoped (NEW-0606-01), and field-level over-exposure to the Manager lens (Gender/tax/address). SoD self-assign still unguarded at both layers (SN-70). Security-priority fix-first.</p>
+      <div class="chips"><span class="key">NEW-BE-H3</span><span class="key">NEW-0606-01</span><span class="key">SN-22-TC-031</span><span class="key">SN-10-FE013</span><span class="key">SN-70-FE-H1</span><span class="key">SN-70-BE-H1</span></div>
     </div>
   </div>
 
   <footer>
-    Sourced from the executed module standalone reports under <code>docs/qa/test-cases/&lt;SN&gt;/results/</code>,
-    the 2026-06-02 all-module defect retest (<code>docs/qa/retest/2026-06-02/</code>),
-    the SN-70 first-execution run (<code>docs/qa/test-cases/SN-70/results/2026-06-04_RUN-SUMMARY.md</code> &middot; <code>health-2026-06-04.md</code>),
-    and the 2026-06-05 full regression sweep (<code>docs/qa/curation/health-2026-06-05.md</code>).
-    SN-70 defects (FE-H1&ndash;H9, BE-H1/H2, 9 mediums) and the cross-cutting silent-403 bug remain unfiled.
+    Reconciled to <code>docs/qa/curation/_snapshot.json</code> (2026-06-06: 104 distinct / 43 open / 61 Done).
+    Sourced from the per-module <code>docs/qa/test-cases/&lt;SN&gt;/results/2026-06-06_fullreg.md</code> files (RBAC-wiring full regression).
+    New 06 Jun RBAC leaks (NEW-BE-H3, NEW-0606-01, SN-22 TC-031/081/044, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and the SN-70 FE/BE-H defects remain unfiled.
     Severities use the SNOPS P1&ndash;P4 scheme.
   </footer>
 

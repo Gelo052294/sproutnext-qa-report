@@ -1159,6 +1159,152 @@
 </section>
 
 <!-- ============================================================
+     REGRESSION UPDATE — 2026-06-06
+     Source: docs/qa/test-cases/SN-66/results/2026-06-06_fullreg.md
+     ============================================================ -->
+<section class="card" style="border-top: 3px solid #7c3aed;">
+  <h2 style="color:#6d28d9;">&#x1F4CB; Full Regression &mdash; 2026-06-06</h2>
+  <p class="summary-text" style="margin-top:0;">
+    Sixth-pass full regression. Entities: <strong>QA Testing</strong> (9 employees, primary) and <strong>Test TH Regional</strong> (150 employees, role-lens + invite-flow TCs).
+    Testers: <strong>richardtest</strong> (Org Admin &mdash; QA Testing primary), <strong>gelosprout2@gmail.com</strong> (Manager &mdash; TC-002 role-lens), <strong>gelosprout3@gmail.com</strong> (Employee &mdash; TC-002 role-lens).
+    Baseline: 2026-06-05 regression (24&thinsp;PASS / 3&thinsp;FAIL / 4&thinsp;PARTIAL / 2&thinsp;BLOCKED).
+    TC-002 RBAC role-lens now runnable for both Manager and Employee paths.
+  </p>
+
+  <div class="summary-grid">
+    <div class="stat-tile"><div class="label">Coverage</div><div class="value">58 / 85</div></div>
+    <div class="stat-tile pass"><div class="label">PASS</div><div class="value" style="color:var(--pass);">28 <small style="font-size:14px;font-weight:400;">+4</small></div></div>
+    <div class="stat-tile fail"><div class="label">FAIL</div><div class="value" style="color:var(--fail);">4 <small style="font-size:14px;font-weight:400;">+1</small></div></div>
+    <div class="stat-tile partial"><div class="label">PARTIAL</div><div class="value" style="color:var(--partial);">6 <small style="font-size:14px;font-weight:400;">+2</small></div></div>
+    <div class="stat-tile blocked"><div class="label">BLOCKED</div><div class="value" style="color:var(--blocked);">0 <small style="font-size:14px;font-weight:400;">&minus;2</small></div></div>
+    <div class="stat-tile"><div class="label">DEFERRED</div><div class="value">24</div></div>
+  </div>
+
+  <p class="summary-text">
+    <strong>Pass rate (excl. deferred):</strong> 28 / 34 = <strong>82%</strong> &nbsp;&bull;&nbsp;
+    <strong>Coverage this pass:</strong> 58 / 85 TCs evaluated (68%) &mdash; +9% vs baseline 59%.
+    <br>
+    <strong>Overall verdict:</strong> PARTIAL &mdash; Core flows stable; 3 prior FAILs persist (SNOPS-93, SNOPS-91, SN-66-FE-NEW-01); 2 defects <span style="color:var(--pass);font-weight:600;">FIXED</span> (SN-66-FE-NEW-02, SNOPS-92 improved); TC-002 now runnable reveals new RBAC defect (Manager scope not enforced).
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">Regressions vs 2026-06-05 Baseline</h3>
+  <p class="summary-text" style="border-left:3px solid var(--fail);padding-left:12px;background:#fef2f2;">
+    <strong>1 new regression:</strong> <strong>TC-002</strong> PASS&nbsp;&rarr;&nbsp;PARTIAL (was BLOCKED). Manager path now runnable &mdash; Manager (<code>workforce.read.team</code>) can access <code>/workforce</code> and sees ALL 150 employees (unscoped to team). Employee path PASS: nav hidden, <code>/workforce</code> redirects to home correctly.
+    <span class="defect-key">NEW-0606-01</span>
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">Fixes vs 2026-06-05 Baseline</h3>
+  <table>
+    <thead>
+      <tr><th>TC(s)</th><th>Defect</th><th>Baseline (0605)</th><th>This Run (0606)</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>TC-011, TC-029</td>
+        <td><span class="defect-key">SN-66-FE-NEW-02</span> &mdash; invite_expired kebab shows &ldquo;Resend invite&rdquo;</td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td><span class="retest retest-fixed">FIXED</span> &mdash; invite_expired row now shows &ldquo;Send invite&rdquo; in kebab menu</td>
+      </tr>
+      <tr>
+        <td>TC-006</td>
+        <td><span class="defect-key">SNOPS-92</span> &mdash; Banner copy: no count, wrong wording</td>
+        <td><span class="badge partial">PARTIAL</span></td>
+        <td><span class="badge partial">PARTIAL</span></td>
+        <td><span class="retest retest-partial">IMPROVED</span> &mdash; Expired banner now shows count: &ldquo;17 invites have expired. Send fresh invites so they don&rsquo;t fall through the cracks.&rdquo; &ldquo;Resend invites&rdquo; button label vs spec&rsquo;s &ldquo;Send invites&rdquo; still to verify.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:18px;font-size:15px;">New Defect</h3>
+  <div class="defect p1" style="margin-top:8px;">
+    <div class="defect-head">
+      <span class="defect-num">NEW-0606-01</span>
+      <span class="pri p1">High</span>
+      <h3>Manager sees ALL 150 employees &mdash; Workforce not team-scoped</h3>
+    </div>
+    <p><strong>Affected TC:</strong> TC-002 (PASS&nbsp;&rarr;&nbsp;FAIL for Manager path)</p>
+    <p><strong>Expected (per [WF-4.1]):</strong> Manager with <code>workforce.read.team</code> scope should not see Workforce in nav; <code>/workforce</code> should return 403 or redirect.</p>
+    <p><strong>Actual:</strong> Workforce IS in left nav; page accessible at <code>/workforce</code>; Total&nbsp;150 employees shown (unscoped to Manager&rsquo;s team).</p>
+    <p><strong>Employee path:</strong> Nav hidden, <code>/workforce</code> redirects to home &mdash; <span style="color:var(--pass);font-weight:600;">CORRECT</span>.</p>
+    <p><strong>Action:</strong> File new Jira defect; blocks [WF-4.1] requirement.</p>
+  </div>
+
+  <h3 style="margin-top:20px;font-size:15px;">Persisting Defects</h3>
+  <table>
+    <thead>
+      <tr><th>Key</th><th>Finding</th><th>Status</th><th>TC(s)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="defect-key">SNOPS-93</span></td>
+        <td>No success toast after bulk send invites &mdash; row transitions correctly but no toast shown</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-025</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SN-66-FE-NEW-01</span></td>
+        <td>Self-deactivate guard absent &mdash; own account (Richard Losande) in deactivate modal without blocking toast</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-003</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SNOPS-91</span></td>
+        <td>Bulk send invite modal says &ldquo;7 days&rdquo; not &ldquo;72 hours&rdquo; &mdash; confirmed again this pass</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-023</td>
+      </tr>
+      <tr>
+        <td><span class="defect-key">SNOPS-88</span></td>
+        <td>Dual-status model &mdash; extra Invite column, duplicate Status column, Invite cancelled in filter, Probation tile absent from headcount strip (5 tiles vs spec 6)</td>
+        <td><span class="badge fail">Persists</span></td>
+        <td>TC-004, TC-007, TC-015</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:18px;font-size:15px;">TC Status Delta vs 2026-06-05</h3>
+  <table>
+    <thead>
+      <tr><th>TC</th><th>Baseline (2026-06-05)</th><th>2026-06-06</th><th>Delta</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>TC-001</td><td><span class="badge pass">PASS</span></td><td><span class="badge pass">PASS</span></td><td>Unchanged</td></tr>
+      <tr><td>TC-002</td><td><span class="badge blocked">BLOCKED</span></td><td><span class="badge partial">PARTIAL</span></td><td><strong>NEW DEFECT</strong> &mdash; Employee path PASS (correct redirect); Manager path FAIL (sees all 150 unscoped). <span class="defect-key">NEW-0606-01</span></td></tr>
+      <tr><td>TC-003</td><td><span class="badge fail">FAIL</span></td><td><span class="badge fail">FAIL</span></td><td>Unchanged (SN-66-FE-NEW-01 persists)</td></tr>
+      <tr><td>TC-004</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Unchanged (SNOPS-88 persists)</td></tr>
+      <tr><td>TC-006</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>IMPROVED &mdash; SNOPS-92 partial fix: count now shown in banner; &ldquo;Resend invites&rdquo; label discrepancy remains</td></tr>
+      <tr><td>TC-007</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Unchanged (SNOPS-88 persists)</td></tr>
+      <tr><td>TC-011</td><td><span class="badge fail">FAIL</span></td><td><span class="badge partial">PARTIAL</span></td><td><span class="retest retest-fixed">FIXED</span> &mdash; SN-66-FE-NEW-02 resolved; invite_expired kebab now &ldquo;Send invite&rdquo;. Cosmetic: &ldquo;Open full profile&rdquo; vs spec&rsquo;s &ldquo;Open full record&rdquo; remains.</td></tr>
+      <tr><td>TC-015</td><td><span class="badge partial">PARTIAL</span></td><td><span class="badge partial">PARTIAL</span></td><td>Unchanged (SNOPS-88 persists)</td></tr>
+      <tr><td>TC-023</td><td><span class="badge pass">PASS</span></td><td><span class="badge pass">PASS</span></td><td>Unchanged (SNOPS-91 &ldquo;7 days&rdquo; modal copy noted; TC result unchanged)</td></tr>
+      <tr><td>TC-025</td><td><span class="badge fail">FAIL</span></td><td><span class="badge fail">FAIL</span></td><td>Unchanged (SNOPS-93 persists)</td></tr>
+      <tr><td>TC-029</td><td><span class="badge fail">FAIL</span></td><td><span class="badge pass">PASS</span></td><td><span class="retest retest-fixed">FIXED</span> &mdash; SN-66-FE-NEW-02 resolved; kebab &ldquo;Send invite&rdquo; + row transitions correctly</td></tr>
+      <tr><td>TC-058</td><td>Not in 0605 delta</td><td><span class="badge pass">PASS</span></td><td>Entity switch QA Testing &rarr; Test TH Regional re-fetched correctly (150 employees)</td></tr>
+      <tr><td>TC-069</td><td>Not in 0605 delta</td><td><span class="badge partial">PARTIAL</span></td><td>123 data-spec-ref elements, 0 PEOPLE-INV refs; sample ref <code>[CC-6.1]</code> not WF-* format &mdash; verify with dev</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;font-size:15px;">Key Findings This Pass</h3>
+  <ul class="summary-text" style="padding-left:22px;">
+    <li><strong>Employee RBAC correct:</strong> Employee (gelosprout3@gmail.com) correctly redirected from <code>/workforce</code> &mdash; nav hidden, page inaccessible. Only the Manager path is broken.</li>
+    <li><strong>Resend-label fixed (TC-011, TC-029):</strong> invite_expired row kebab now shows &ldquo;Send invite&rdquo; (not &ldquo;Resend invite&rdquo;) per spec. SN-66-FE-NEW-02 CLOSED.</li>
+    <li><strong>Banner count fixed (SNOPS-92 partial):</strong> Expired invite banner now renders with count and descriptive copy (&ldquo;17 invites have expired. Send fresh invites so they don&rsquo;t fall through the cracks.&rdquo;). &ldquo;Resend invites&rdquo; button label vs spec&rsquo;s &ldquo;Send invites&rdquo; remains to verify.</li>
+    <li><strong>SNOPS-93 persists:</strong> No success toast after bulk send invite (TC-025). ProbationGelo TestEmp transitioned invite_expired&nbsp;&rarr;&nbsp;Invited correctly; toast absent.</li>
+    <li><strong>SNOPS-91 persists:</strong> Bulk send invite modal copy still reads &ldquo;They have 7 days to set their password.&rdquo; &mdash; spec says 72-hour TTL.</li>
+    <li><strong>SNOPS-88 persists:</strong> Dual-status column model unchanged; Probation tile still absent from headcount strip.</li>
+    <li><strong>Self-deactivate guard (SN-66-FE-NEW-01) persists:</strong> Richard Losande&rsquo;s own account appears in deactivate modal without blocking toast.</li>
+  </ul>
+
+  <p class="summary-text" style="margin-top:14px;font-size:13px;color:#5b6470;font-style:italic;">
+    Source: <code>docs/qa/test-cases/SN-66/results/2026-06-06_fullreg.md</code> &middot;
+    Admin: richardtest (QA Testing primary) / gelosprout2@gmail.com (Manager) / gelosprout3@gmail.com (Employee) &middot;
+    Screenshots prefix: <code>FULLREG-0606-*</code> &middot;
+    Data mutated: probationgelo@sprouttest.com (invite_expired&nbsp;&rarr;&nbsp;invited, reversible via TTL)
+  </p>
+</section>
+
+<!-- ============================================================
      REGRESSION UPDATE — 2026-06-05
      Source: docs/qa/test-cases/SN-66/results/2026-06-05_regression.md
      ============================================================ -->

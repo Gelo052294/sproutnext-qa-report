@@ -117,6 +117,43 @@
   </div>
 
 
+  <section class="card regression-update fullreg-0606">
+    <h2>
+      <span class="reg-badge" style="background:#0f766e;">Full Regression</span>
+      2026-06-06 Full Regression
+    </h2>
+    <div class="reg-meta">
+      <span><strong>Date:</strong> 2026-06-06</span>
+      <span><strong>Env:</strong> qa</span>
+      <span><strong>Accounts:</strong> richardtest / 8Waystop! (Richard Losande, Org Admin, write-capable) + gelosprout2 (Manager) + gelosprout3 (Employee)</span>
+      <span><strong>Entity:</strong> QA Testing (TH, Asia/Bangkok) -- 4 depts, 4 job titles, 2 locations</span>
+      <span><strong>Baseline:</strong> 2026-06-05_regression.md (johnangelol / Test TH Regional -- 27 pass / 2 fail / 12 partial / 11 blocked; 60/112)</span>
+    </div>
+    <div class="summary-grid" style="margin-top:14px;">
+      <div class="stat-tile pass"><div class="label">Passed</div><div class="value">36</div></div>
+      <div class="stat-tile fail"><div class="label">Failed</div><div class="value">2</div></div>
+      <div class="stat-tile partial"><div class="label">Partial</div><div class="value">10</div></div>
+      <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">8</div></div>
+      <div class="stat-tile deferred"><div class="label">Deferred</div><div class="value">56</div></div>
+      <div class="stat-tile"><div class="label">Coverage</div><div class="value">56/112</div></div>
+    </div>
+    <p class="summary-text"><strong>Verdict: FAILED</strong> &mdash; 2 confirmed product defects persist (FE002, FE003). No new regressions.</p>
+    <h4 class="reg-subhead">Write Operations Unblocked (richardtest)</h4>
+    <div class="reg-alert" style="background:#f0fdf4;border-color:#bbf7d0;border-left-color:#16a34a;">
+      <strong style="color:#15803d;">7 TCs BLOCKED→PASS:</strong> Writes now work under richardtest. 7 previously-403-blocked TCs (dept create TC-028, name edit TC-044, deactivate-with-members TC-056, deactivate-0-member TC-057, Settings Inactive inline warning TC-058, reactivate TC-059, save-success TC-097) BLOCKED→PASS (or PARTIAL for TC-059 -- UX deviation, no kebab Reactivate).
+    </div>
+    <h4 class="reg-subhead">TC-001 Role-Gate</h4>
+    <p class="summary-text" style="color:#16a34a;font-weight:600;">PASS &mdash; TC-001 PASS: Manager (Gelo Manager) and Employee (Gelo Employee3) both see "Restricted area -- Only admins can manage organization structure." on direct URL navigation to /settings/org-structure. No org data shown.</p>
+    <h4 class="reg-subhead">Regressions vs 2026-06-05 Baseline</h4>
+    <p class="summary-text" style="color:#16a34a;font-weight:600;">None confirmed.</p>
+    <h4 class="reg-subhead">Persisting Defects</h4>
+    <table class="reg-defect-table">
+      <thead><tr><th>Key</th><th>Description</th></tr></thead>
+      <tbody><tr><td><code>SN-14-FE002</code></td><td>Province dropdown sorted by province code (Bangkok TH-10 first), not alphabetical by name_en. No Thai-script (name_th) labels per option. Affects TC-039 and TC-104. Unchanged.</td></tr><tr><td><code>SN-14-FE003</code></td><td>Job Title create modal label reads "Name *" not "Title name" per AC-OC5. Affects TC-030. Unchanged.</td></tr></tbody>
+    </table>
+  </section>
+
+
   <section class="card regression-update">
     <h2>
       <span class="reg-badge">Regression Run</span>
@@ -1741,7 +1778,7 @@
   <img id="lb-img" src="" alt="screenshot" />
 </div>
 
-<footer>Updated: 2026-06-05 (Regression Run) &nbsp;|&nbsp; Initial: 2026-05-31 09:07 &nbsp;|&nbsp; SN-14 Organization Module &nbsp;|&nbsp; QA Tester Agent (Claude Sonnet 4.6) &nbsp;|&nbsp; Screenshots: 44</footer>
+<footer>Updated: 2026-06-05 (Regression Run) &nbsp;|&nbsp; Initial: 2026-05-31 09:07 &nbsp;|&nbsp; SN-14 Organization Module &nbsp;|&nbsp; QA Tester Agent (Claude Sonnet 4.6) &nbsp;|&nbsp; Screenshots: 54</footer>
 
 <script>
 function filterTCs(status, btn) {

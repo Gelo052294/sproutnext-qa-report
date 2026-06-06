@@ -112,6 +112,133 @@
 <main>
 
 <!-- ============================================================
+     2026-06-06 FULL REGRESSION
+     ============================================================ -->
+<section class="card" style="border-left: 4px solid #2563eb; background: #eff6ff;">
+  <h2 style="color: #1d4ed8;">&#9654; Full Regression &mdash; 2026-06-06</h2>
+  <p style="font-size:13px; color:#5b6470; margin: -6px 0 14px 0;">
+    Run date: <strong>2026-06-06</strong> &middot; Entity: <strong>Test TH Regional</strong> &middot;
+    Admin: <code>richardtest</code> &middot; Manager (RBAC probe): <code>gelosprout2</code> &middot;
+    Employee (RBAC probe): <code>gelosprout3</code> &middot; Env: <code>qa</code> &middot;
+    Baseline: <code>2026-06-05_regression.md</code> (32P / 2F / 8Partial / 9Blocked / 12Deferred)
+  </p>
+
+  <div class="summary-grid">
+    <div class="stat-tile pass"><div class="label">Pass</div><div class="value">35 <span style="font-size:14px;color:#16a34a;">(+3)</span></div></div>
+    <div class="stat-tile fail"><div class="label">Fail</div><div class="value">0 <span style="font-size:14px;color:#16a34a;">(&minus;2)</span></div></div>
+    <div class="stat-tile partial"><div class="label">Partial</div><div class="value">10 <span style="font-size:14px;color:#d97706;">(+2)</span></div></div>
+    <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">6 <span style="font-size:14px;color:#16a34a;">(&minus;3)</span></div></div>
+    <div class="stat-tile deferred"><div class="label">Deferred</div><div class="value">12</div></div>
+    <div class="stat-tile pass"><div class="label">Graded Total</div><div class="value">53</div></div>
+    <div class="stat-tile pass"><div class="label">Pass Rate (runnable)</div><div class="value" style="font-size:20px;">100%</div></div>
+  </div>
+
+  <p style="font-size:14px; color:#1a1d21; margin: 0 0 10px 0;">
+    <strong>Overall: PASS.</strong> All 41 re-runnable UI TCs pass. Zero active defects &mdash;
+    <code>SN2-FE004</code> (National modal footer wording) and <code>SN2-FE005</code> (Duplicate kebab) both confirmed resolved.
+    TC-055 (second consecutive below-floor exclusion) unblocked and now passes.
+    TC-001 RBAC partially resolved: Employee correctly blocked (sidebar hidden); Manager sidebar link visible despite no <code>holiday.view</code> (new finding RBAC-HOL-001). No regressions.
+  </p>
+
+  <h3 style="font-size:15px; margin: 18px 0 8px 0;">Fixes vs 2026-06-05</h3>
+  <table>
+    <thead>
+      <tr><th>TC</th><th>Prior Status</th><th>Current Status</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TC-032</strong></td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td><strong>SN2-FE004 RESOLVED.</strong> National row View modal footer now reads <em>"Use the Include toggle in the table to exclude this holiday."</em> &mdash; matches spec HOL-7.7.5 exactly. Previously showed the PolicyCore statutory wording.</td>
+      </tr>
+      <tr>
+        <td><strong>TC-052</strong></td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td><strong>SN2-FE005 RESOLVED.</strong> Duplicate kebab action opens &ldquo;Duplicate holiday&rdquo; modal with name pre-filled as &ldquo;Copy of [original]&rdquo;, date blank (required), other fields carried over. Previously <code>aria-disabled</code> on all rows.</td>
+      </tr>
+      <tr>
+        <td><strong>TC-055</strong></td>
+        <td><span class="badge blocked">BLOCKED</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td><strong>TC-055 WAIVER RESOLVED.</strong> Second consecutive below-floor exclusion: waiver modal opens fresh with updated math (Floor:14, Proposed:12, Shortfall:2); all ack fields blank; prior waiver not reused.</td>
+      </tr>
+      <tr>
+        <td><strong>TC-001</strong></td>
+        <td><span class="badge blocked">BLOCKED</span></td>
+        <td><span class="badge partial">PARTIAL</span></td>
+        <td>RBAC probe executed. Employee (gelosprout3): no Holidays sidebar link + content denied &#10003;. Manager (gelosprout2): sidebar link visible but content denied &mdash; spec HOL-4.1 expects sidebar hidden (see new finding RBAC-HOL-001).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size:15px; margin: 18px 0 8px 0;">Defect Ledger (Net &minus;1)</h3>
+  <table>
+    <thead>
+      <tr><th>Key</th><th>TC</th><th>Status Change</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="defect-key" style="background:#16a34a;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;">SN2-FE004</code></td>
+        <td>TC-032</td>
+        <td><span class="badge pass">FIXED</span></td>
+        <td>National View modal footer copy now matches spec HOL-7.7.5.</td>
+      </tr>
+      <tr>
+        <td><code class="defect-key" style="background:#16a34a;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;">SN2-FE005</code></td>
+        <td>TC-052</td>
+        <td><span class="badge pass">FIXED</span></td>
+        <td>Duplicate kebab action functional; modal pre-fills name correctly.</td>
+      </tr>
+      <tr>
+        <td><code class="defect-key" style="background:#c2410c;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;">RBAC-HOL-001</code></td>
+        <td>TC-001</td>
+        <td><span class="badge fail">NEW</span></td>
+        <td>
+          <strong>Medium.</strong> Manager sees &ldquo;Holidays&rdquo; sidebar link despite no <code>holiday.view</code> permission.
+          Spec HOL-4.1: module must not appear in sidebar navigation without <code>holiday.view</code>.
+          Content denial is correct; sidebar affordance leaks module existence to unauthorized users.
+          Employee sidebar correctly hides the link.
+        </td>
+      </tr>
+      <tr>
+        <td><code class="defect-key" style="background:#6b7280;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;">FINDING-0606-001</code></td>
+        <td>TC-019 / TC-037</td>
+        <td><span class="badge partial">INVESTIGATION</span></td>
+        <td>
+          <strong>Low.</strong> Company holiday save fails for 2027 dates (e.g. 2027-03-15): &ldquo;Couldn&rsquo;t save the holiday. Something went wrong.&rdquo;
+          2026 dates succeed immediately. National tab shows 2027 in year selector &mdash; unclear if company holiday year-window extends to 2027 on BE.
+          Investigate whether the BE year-window for company holiday creation covers 2027.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size:15px; margin: 18px 0 8px 0;">Coverage &mdash; 2026-06-06</h3>
+  <table>
+    <thead>
+      <tr><th>Bucket</th><th>Count</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>UI TCs re-run this pass</td><td>41</td><td>35 PASS, 0 FAIL, 6 PARTIAL, 0 BLOCKED among re-runnable</td></tr>
+      <tr><td>Blocked (provisioning / 2nd entity)</td><td>6</td><td>Unchanged from 06-05 (TC-002, 004, 005, 039, 042, 043, 058)</td></tr>
+      <tr><td>Deferred (API, no key)</td><td>12</td><td>Unchanged from 06-05</td></tr>
+      <tr><td>Fixes confirmed</td><td>3</td><td>TC-032 (SN2-FE004), TC-052 (SN2-FE005), TC-055 (waiver fresh state)</td></tr>
+      <tr><td>Regressions</td><td>0</td><td>Zero PASS&rarr;FAIL regressions</td></tr>
+      <tr><td>New findings</td><td>2</td><td>RBAC-HOL-001 (manager sidebar leak), FINDING-0606-001 (2027 company save)</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px; color:#5b6470; margin: 18px 0 0 0;">
+    Source: <code>2026-06-06_fullreg.md</code> &middot; Screenshots prefixed <code>FULLREG-0606-</code> &middot; Browser: Chromium (Playwright MCP)
+  </p>
+</section>
+<!-- ============================================================
+     END 2026-06-06 FULL REGRESSION
+     ============================================================ -->
+
+<!-- ============================================================
      2026-06-05 REGRESSION UPDATE
      ============================================================ -->
 <section class="card" style="border-left: 4px solid #16a34a; background: #f0fdf4;">

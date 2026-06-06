@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SN-62 &mdash; Clock In/Out Chip QA Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg:#f1f5f9; --card:#fff; --ink:#0f172a; --ink-2:#334155; --ink-dim:#64748b; --line:#e2e8f0;
+    --p1:#b91c1c; --p1-bg:#fee2e2; --p2:#b45309; --p2-bg:#fef3c7; --p3:#475569; --p3-bg:#e2e8f0;
+    --pass:#15803d; --pass-bg:#dcfce7; --info:#1d4ed8; --info-bg:#dbeafe;
+    --t1:#7f1d1d; --t1-bg:#fef2f2; --t1-ac:#dc2626;
+    --pending:#475569; --pending-bg:#f1f5f9;
+    --active:#15803d; --active-bg:#dcfce7;
+    --done:#1d4ed8; --done-bg:#dbeafe;
+    --error:#b91c1c; --error-bg:#fee2e2;
+    --blocked:#9333ea; --blocked-bg:#f3e8ff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  header { background:linear-gradient(120deg,#0e7490 0%,#0891b2 55%,#0369a1 100%); color:#fff; padding:30px 44px 26px; }
+  header h1 { margin:0 0 8px; font-size:27px; font-weight:800; letter-spacing:-0.02em; }
+  header .meta { color:#cffafe; font-size:14px; font-weight:500; }
+  header .meta code { background:rgba(255,255,255,0.18); padding:1px 7px; border-radius:5px; color:#fff; }
+  main { max-width:1280px; margin:0 auto; padding:24px 20px 64px; }
+  .section-label { font-size:13px; font-weight:800; letter-spacing:0.06em; color:var(--ink-2); text-transform:uppercase; margin:32px 4px 14px; }
+  .section-label .sub { font-weight:500; text-transform:none; letter-spacing:0; color:var(--ink-dim); margin-left:10px; font-size:13px; }
+  .lead { background:var(--card); border:1px solid var(--line); border-left:5px solid var(--t1-ac); border-radius:10px; padding:16px 20px; font-size:14px; color:var(--ink-2); }
+  .lead strong { color:var(--ink); }
+  .lead.warn { border-left-color:var(--p1); background:#fef2f2; margin-top:10px; }
+  .lead.info { border-left-color:var(--info); background:var(--info-bg); margin-top:10px; }
+  .lead.good { border-left-color:var(--pass); background:#f0fdf4; margin-top:10px; }
+
+  /* Stat tiles — matches SN-2/SN-22/SN-70 convention */
+  .stat-tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-top:14px; }
+  .stat-tile { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .stat-tile .label { font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; font-weight:700; }
+  .stat-tile .value { font-size:26px; font-weight:700; margin-top:4px; }
+  .stat-tile .note { font-size:11.5px; color:var(--ink-dim); margin-top:4px; }
+  .stat-tile.pass .value { color:var(--pass); }
+  .stat-tile.fail .value { color:var(--p1); }
+  .stat-tile.partial .value { color:var(--p2); }
+  .stat-tile.blocked .value { color:var(--blocked); }
+  .stat-tile.skipped .value { color:var(--ink-dim); }
+
+  /* State strip */
+  .states { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:880px){ .states { grid-template-columns:1fr 1fr; } }
+  .state { background:var(--card); border:1px solid var(--line); border-radius:11px; padding:14px 15px; box-shadow:0 1px 3px rgba(15,23,42,.06); position:relative; overflow:hidden; }
+  .state::before { content:""; position:absolute; inset:0 auto 0 0; width:5px; }
+  .state.pending::before{background:var(--pending);}
+  .state.active::before{background:var(--active);}
+  .state.done::before{background:var(--done);}
+  .state.error::before{background:var(--error);}
+  .state .step { font-size:10.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.04em; }
+  .state .nm { font-size:15px; font-weight:800; margin:3px 0 8px; }
+  .state .mod { font-size:11.5px; color:var(--ink-dim); margin-bottom:9px; }
+  .state .cnt { font-size:13px; font-weight:600; color:var(--ink-2); }
+  .state .cnt b { font-size:20px; font-weight:800; color:var(--ink); }
+  .state .p1n { color:var(--p1); font-weight:800; }
+  .state .ok { color:var(--pass); font-weight:800; }
+  .state .bl { color:var(--blocked); font-weight:800; }
+
+  /* Tier cards */
+  .tier { background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 1px 3px rgba(15,23,42,.06); overflow:hidden; margin-bottom:18px; }
+  .tier > h3 { margin:0; padding:15px 22px; font-size:16px; font-weight:800; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; }
+  .tier.t1 > h3 { background:var(--t1-bg); color:var(--t1); }
+  .tier.t2 > h3 { background:var(--p1-bg); color:var(--p1); }
+  .tier.t3 > h3 { background:var(--p2-bg); color:var(--p2); }
+  .tier.t4 > h3 { background:var(--p3-bg); color:var(--p3); }
+  .tier.tdone > h3 { background:var(--pass-bg); color:var(--pass); }
+  .tier.tblock > h3 { background:var(--blocked-bg); color:var(--blocked); }
+  .tier > h3 .hint { font-weight:500; font-size:12.5px; color:var(--ink-dim); margin-left:auto; }
+
+  table { border-collapse:collapse; width:100%; font-size:13.5px; }
+  th { text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-2); font-weight:800; background:#f8fafc; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td { padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafcff; }
+  .key { font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; white-space:nowrap; }
+  .tc { font-family:ui-monospace,monospace; font-size:11.5px; font-weight:600; color:var(--info); }
+  .sev { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:800; white-space:nowrap; }
+  .sev.p1{ background:var(--p1-bg); color:var(--p1);} .sev.p2{ background:var(--p2-bg); color:var(--p2);} .sev.p3{ background:var(--p3-bg); color:var(--p3);}
+  .stg { display:inline-block; padding:2px 9px; border-radius:999px; font-size:10.5px; font-weight:700; white-space:nowrap; }
+  .stg.pending{ background:var(--pending-bg); color:var(--pending);} .stg.active{ background:var(--active-bg); color:var(--active);}
+  .stg.done{ background:var(--done-bg); color:var(--done);} .stg.error{ background:var(--error-bg); color:var(--error);}
+  .stg.all{ background:#f1f5f9; color:var(--ink-dim);} .stg.broadcast{ background:#fce7f3; color:#be185d;}
+  .st { font-size:11.5px; font-weight:700; white-space:nowrap; }
+  .st.open{ color:var(--p1);} .st.partial{ color:var(--p2);} .st.notr{ color:var(--ink-dim);} .st.fixed{ color:var(--pass);} .st.blocked{ color:var(--blocked);}
+  td .jira { font-family:ui-monospace,monospace; font-size:11px; color:var(--info); }
+  td.sum { color:var(--ink-2); }
+  td.sum .why { display:block; color:var(--ink-dim); font-size:12px; margin-top:3px; }
+
+  .themes { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:880px){ .themes { grid-template-columns:1fr; } }
+  .theme { background:var(--card); border:1px solid var(--line); border-top:4px solid #0e7490; border-radius:11px; padding:16px 18px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .theme h4 { margin:0 0 8px; font-size:14.5px; }
+  .theme p { margin:0 0 8px; font-size:13px; color:var(--ink-2); }
+  .theme .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .theme .chips .key { background:#f1f5f9; padding:2px 7px; border-radius:5px; }
+
+  .actions { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 22px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .actions ol { margin:6px 0 0 0; padding-left:20px; }
+  .actions li { margin-bottom:9px; font-size:13.5px; color:var(--ink-2); }
+  .actions li strong { color:var(--ink); }
+  .actions .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:middle; }
+  .actions .dot.r{ background:var(--p1);} .actions .dot.y{ background:var(--p2);} .actions .dot.g{ background:var(--pass);}
+
+  footer { color:var(--ink-dim); font-size:12.5px; padding:26px 4px 0; text-align:center; }
+  footer code { background:#e9eef3; padding:1px 6px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SN-62 &mdash; [CC] Clock In/Out Chip</h1>
+  <div class="meta">
+    App Shell punch surface &middot; Module <code>CC</code> &middot; Environment <code>qa</code> &middot; Runs: <code>2026-06-04</code> + <code>2026-06-05</code> + <code>2026-06-06</code> &middot; <strong>Latest: 42 PASS / 7 FAIL / 2 PARTIAL &mdash; clock-in 403 fix unblocked</strong>
+  </div>
+</header>
+
+<main>
+
+  <div class="lead">
+    <strong>What this is.</strong> Two-run consolidated QA report for the Clock In/Out Chip &mdash; the worker-facing punch surface that lives in the App Shell topbar of every page and serves as the single source of truth for employee clock writes. Binding contract: <code>TT_ClockChip_TestCases.md</code> (92 TCs / 40 P0 / 30 P1 / 22 P2). Run 1 (2026-06-04) was admin-only; Run 2 (2026-06-05) re-attempted Employee/Manager-role TCs. <strong>Headline:</strong> chip is shipped and the core state machine works (open panel, active counter, done terminal, retry-window, token compliance). <strong>5 real defects found</strong> &mdash; 1 P1 Hard Lock (zero i18n), 1 P2 (postMessage dismiss not handled), 3 P3 polish. All 3 regression candidates remain <strong>blocked</strong> on a credential/role provisioning gap.
+  </div>
+
+  <div class="lead warn">
+    <strong>Surprise #1 &mdash; Jira state drift.</strong> The chip is <strong>deployed and functional</strong> in QA (element <code>button[data-spec-ref="[CC-6.1]"]</code> renders on first login), but SN-63 (FE) and SN-64 (BE) sit at <code>Backlog</code> in Jira. Implementation is ahead of ticket status; either transitions were missed or someone pre-shipped without flipping state. Worth verifying with PM before relying on Jira lifecycle for handoff signoff.
+  </div>
+
+  <div class="lead warn">
+    <strong>Surprise #2 &mdash; role provisioning gap (dominant blocker).</strong> <code>E2E_TEST_EMPLOYEE_USERNAME</code> (<code>gelosprout3</code>) and <code>E2E_TEST_MANAGER_USERNAME</code> (<code>gelosprout2</code>) authenticate fine but <strong>both hold <code>admin</code> role</strong>. Clock In returns HTTP <strong>403</strong> &mdash; <code>attendance.own.clock</code> is not granted to admin. This single gap blocks 28+ TCs and all 3 regression candidates. <strong>Fix:</strong> grant <code>attendance.own.clock</code> to the existing accounts, or reprovision two new accounts with proper <code>employee</code> / <code>manager</code> roles. Memorialized as <code>qa-employee-manager-cred-mismatch</code>.
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- RUN 3 — 2026-06-06 FULL REGRESSION                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:36px">2026-06-06 Full Regression <span class="sub">&mdash; Run 3 &middot; clock-in 403 fix &middot; 67 in-scope TCs</span></div>
+
+  <div class="lead good">
+    <strong>Headline &mdash; clock-in 403 fix unblocked 34 previously-BLOCKED TCs.</strong>
+    Employee, Manager, and Admin accounts can now clock in successfully. ~30 of those 34 TCs move to <strong>PASS</strong> this run, covering the live counter, canonical payloads, all state transitions (pending&rarr;active&rarr;done), cold-reload reconstruction, and single-session enforcement.
+    <strong>No regressions</strong> &mdash; all prior FAILs remain FAIL on the same defect; no new failures introduced.
+  </div>
+
+  <div class="lead warn">
+    <strong>Persisting failures (3rd consecutive run).</strong>
+    <code>shell:clockSync</code> broadcasts: 0 captures across all listeners (TC-018, TC-062&ndash;067, TC-REG-003).
+    Root cause hypothesis: chip may emit to a <strong>parent-frame window</strong> (BFF SPA embedded in iframe), not <code>window</code> itself &mdash; clarification needed from dev.
+    Also persisting: <code>data-i18n=0</code> (Hard Lock, TC-083), animation name/duration mismatch (TC-081), dismiss-popovers no-op (TC-009), role badge absent from topbar (TC-002/003).
+  </div>
+
+  <div class="stat-tiles" style="margin-top:14px">
+    <div class="stat-tile pass">
+      <div class="label">Pass</div>
+      <div class="value">42</div>
+      <div class="note">+20 vs 2026-06-05 (prior: 22)</div>
+    </div>
+    <div class="stat-tile fail">
+      <div class="label">Fail</div>
+      <div class="value">7</div>
+      <div class="note">&plusmn;0 vs prior (same 5 defects)</div>
+    </div>
+    <div class="stat-tile partial">
+      <div class="label">Partial</div>
+      <div class="value">2</div>
+      <div class="note">+2 vs prior (role badge still absent)</div>
+    </div>
+    <div class="stat-tile blocked">
+      <div class="label">Blocked</div>
+      <div class="value">0</div>
+      <div class="note">&minus;18 vs prior (403 fix resolved)</div>
+    </div>
+    <div class="stat-tile skipped">
+      <div class="label">Skipped / Not run</div>
+      <div class="value">16</div>
+      <div class="note">fixture-dependent or API-only</div>
+    </div>
+    <div class="stat-tile">
+      <div class="label">In-scope TCs</div>
+      <div class="value">67</div>
+      <div class="note">of 92 total</div>
+    </div>
+    <div class="stat-tile fail">
+      <div class="label">Open Defects</div>
+      <div class="value">5</div>
+      <div class="note">SN-62-FE-NEW-001&hellip;005 &middot; &plusmn;0 new</div>
+    </div>
+    <div class="stat-tile pass">
+      <div class="label">Pass Rate (graded)</div>
+      <div class="value" style="font-size:20px;">82%</div>
+      <div class="note">42 / (42+7+2) graded</div>
+    </div>
+  </div>
+
+  <!-- State-machine coverage update -->
+  <div class="section-label" style="margin-top:24px">Coverage by chip state <span class="sub">&mdash; Run 3 status &middot; 2026-06-06</span></div>
+  <div class="states">
+    <div class="state pending">
+      <div class="step">STATE 1 &middot; PENDING</div>
+      <div class="nm">Pre-clock-in</div>
+      <div class="mod">Panel open/close, location selector, role variants</div>
+      <div class="cnt"><b>12</b> pass &middot; <span class="p1n">4 fail</span> &middot; <span style="color:var(--p2);font-weight:700">2 partial</span> &middot; 4 skipped</div>
+    </div>
+    <div class="state active">
+      <div class="step">STATE 2 &middot; ACTIVE</div>
+      <div class="nm">Clocked-in</div>
+      <div class="mod">Counter, payload, broadcast contract</div>
+      <div class="cnt"><b>9</b> pass &middot; <span class="p1n">7 fail</span> <span style="color:var(--ink-dim);font-weight:500">(broadcast §J)</span> &middot; 0 blocked</div>
+    </div>
+    <div class="state done">
+      <div class="step">STATE 3 &middot; DONE</div>
+      <div class="nm">Clocked-out (terminal)</div>
+      <div class="mod">No re-arm, details zone, cold reload</div>
+      <div class="cnt"><b>15</b> pass &middot; <span class="ok">0 blocked</span> &middot; <span style="color:var(--ink-dim);font-weight:500">all unblocked</span></div>
+    </div>
+    <div class="state error">
+      <div class="step">STATE 4 &middot; ERROR</div>
+      <div class="nm">Engine NACK</div>
+      <div class="mod">Retry, fallback, transient state tokens</div>
+      <div class="cnt"><b>6</b> pass &middot; <span style="color:var(--pass);font-weight:700">not re-run this pass</span> &middot; prior results valid</div>
+    </div>
+  </div>
+
+  <!-- What the 403 fix unlocked -->
+  <div class="section-label" style="margin-top:24px">403-fix unblocked — now PASS <span class="sub">&mdash; 30+ TCs moved from BLOCKED to PASS</span></div>
+  <div class="tier tdone">
+    <h3>&check; Unblocked and PASS this run <span class="hint">clock-in 403 fix &middot; 2026-06-06</span></h3>
+    <table>
+      <thead><tr><th>TC</th><th>Name</th><th>Prior</th><th>This Run</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">TC-021</td><td>Location selector hides; location row in details</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-025</td><td>Counter ticks every 10s</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-027</td><td>Counter does not run in done/pending</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-028</td><td>Counter cleared on Clock Out</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-029</td><td>Clock Out emits canonical payload, no location</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-031</td><td>Chip transitions active to done</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-034</td><td>Primary button hidden in done state</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-035</td><td>Done-state details zone shows full session</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-037</td><td>No Clock In button in done state</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-039</td><td>Reload after done returns to done, not pending</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-042</td><td>Break-punch buttons absent in all states</td><td><span class="st blocked">PARTIAL BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-043</td><td>DailyAttendance null clock_out &mdash; resume active</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-044</td><td>DailyAttendance non-null clock_out &mdash; resume done</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-045</td><td>No DailyAttendance &mdash; mount pending</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-077</td><td>Active state visual (green tokens)</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-078</td><td>Done state visual (muted tokens)</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-082</td><td>Token compliance &mdash; no hardcoded hex in any state</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-REG-001</td><td>Single-session enforcement &mdash; done blocks clock-in</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-REG-002</td><td>Cold reload reconstruction (all 3 states)</td><td><span class="st blocked">BLOCKED</span></td><td><span class="st fixed">PASS</span></td></tr>
+        <tr><td class="tc">TC-001</td><td>Employee role &mdash; pulse hidden, badge hidden</td><td><span class="st open">FAIL (admin role)</span></td><td><span class="st fixed">PASS</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Persisting failures -->
+  <div class="section-label" style="margin-top:4px">Persisting failures &mdash; 3rd consecutive run <span class="sub">&mdash; unchanged defects</span></div>
+  <div class="tier t2">
+    <h3>&#9888; Still failing &mdash; no change <span class="hint">same root causes as Run 1 &amp; Run 2</span></h3>
+    <table>
+      <thead><tr><th>TC(s)</th><th>Defect</th><th>Root cause</th><th>Runs failing</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc">TC-018, TC-062&ndash;067, TC-REG-003</td>
+          <td><strong><code>shell:clockSync</code> broadcasts not captured</strong></td>
+          <td>0 messages on <code>window.postMessage</code> or <code>BroadcastChannel</code> (4 channel names tried). Likely iframe scope &mdash; chip may emit to parent shell window, not SPA window. Needs dev clarification.</td>
+          <td>Run 1, 2, 3</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-083</td>
+          <td><strong>data-i18n = 0 (Hard Lock)</strong></td>
+          <td>Zero <code>data-i18n</code> attributes in DOM across all chip states. Blocks Thai locale ship.</td>
+          <td>Run 1, 2, 3</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-081</td>
+          <td><strong>Animation: <code>enter</code> 0.15s vs spec <code>clockPanelIn</code> 0.2s</strong></td>
+          <td>Wrong animation name and duration on panel open. Cosmetic/P3.</td>
+          <td>Run 2, 3</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-009</td>
+          <td><strong>module:dismissPopovers has no effect</strong></td>
+          <td>Panel stays open after <code>postMessage({ type: 'module:dismissPopovers' })</code>.</td>
+          <td>Run 1, 2, 3</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-002, TC-003</td>
+          <td><strong>Role badge absent from topbar</strong></td>
+          <td>Manager "Your Team" and Admin "Org Pulse" data shown inside panel but no separate topbar role-badge chip renders.</td>
+          <td>Run 2, 3 (PARTIAL)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Accounts -->
+  <div class="section-label" style="margin-top:4px">Run 3 account states <span class="sub">&mdash; 2026-06-06 13:27&ndash;13:42 Asia/Bangkok</span></div>
+  <div class="actions" style="font-size:13px;color:var(--ink-2)">
+    <ul style="margin:6px 0 0 0;padding-left:20px;line-height:2">
+      <li><strong>Employee</strong> &mdash; gelosprout3@gmail.com &middot; Test TH Regional &middot; DONE (05:38/05:38 from prior wiring test) &mdash; <em>next run = new day</em></li>
+      <li><strong>Manager</strong> &mdash; gelosprout2@gmail.com &middot; Test TH Regional &middot; clocked in 13:40, out 13:41 &rarr; DONE &mdash; <em>next run = new day</em></li>
+      <li><strong>Org Admin</strong> &mdash; richardtest &middot; Acme SG Central &middot; was ACTIVE (09:03), clocked out 13:35 &rarr; DONE &mdash; <em>next run = new day</em></li>
+    </ul>
+  </div>
+
+  <hr style="border:none;border-top:1px solid var(--line);margin:32px 0 8px" />
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- END RUN 3                                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="section-label">At a glance <span class="sub">&mdash; de-duplicated across both runs &middot; final status per TC (Runs 1&ndash;2)</span></div>
+  <div class="stat-tiles">
+    <div class="stat-tile"><div class="label">Total TCs</div><div class="value">92</div><div class="note">40 P0 / 30 P1 / 22 P2</div></div>
+    <div class="stat-tile pass"><div class="label">Pass</div><div class="value">40</div><div class="note">across both runs</div></div>
+    <div class="stat-tile fail"><div class="label">Fail</div><div class="value">5</div><div class="note">real bugs (TC-009, 080, 081, 083, 090)</div></div>
+    <div class="stat-tile partial"><div class="label">Partial</div><div class="value">2</div><div class="note">role-mismatch artifacts (TC-001, 002)</div></div>
+    <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">33</div><div class="note">28 on role 403 / 5 on fixtures</div></div>
+    <div class="stat-tile skipped"><div class="label">Skipped</div><div class="value">7</div><div class="note">API orchestrator-owned</div></div>
+    <div class="stat-tile skipped"><div class="label">Not run</div><div class="value">5</div><div class="note">CI tooling / manual NVDA</div></div>
+    <div class="stat-tile fail"><div class="label">Distinct Defects</div><div class="value">5</div><div class="note">1 P1 + 1 P2 + 3 P3 &middot; all NOT FILED</div></div>
+    <div class="stat-tile pass"><div class="label">Pass Rate</div><div class="value" style="font-size:20px;">85.1%</div><div class="note">40 / 47 graded (Pass+Fail+Partial)</div></div>
+  </div>
+
+  <div class="section-label">Coverage by chip state <span class="sub">&mdash; pass / blocked split per state machine node</span></div>
+  <div class="states">
+    <div class="state pending">
+      <div class="step">STATE 1 &middot; PENDING</div>
+      <div class="nm">Pre-clock-in</div>
+      <div class="mod">Panel open/close, location selector, role variants</div>
+      <div class="cnt"><b>14</b> pass &middot; <span class="p1n">2 fail</span> &middot; <span class="bl">4 blocked</span></div>
+    </div>
+    <div class="state active">
+      <div class="step">STATE 2 &middot; ACTIVE</div>
+      <div class="nm">Clocked-in</div>
+      <div class="mod">Counter ticking, payload, broadcast contract</div>
+      <div class="cnt"><b>9</b> pass &middot; <span class="bl">14 blocked</span> <span style="color:var(--ink-dim);font-weight:500">on 403</span></div>
+    </div>
+    <div class="state done">
+      <div class="step">STATE 3 &middot; DONE</div>
+      <div class="nm">Clocked-out (terminal)</div>
+      <div class="mod">No re-arm, details zone, cold reload</div>
+      <div class="cnt"><b>10</b> pass &middot; <span class="bl">10 blocked</span> <span style="color:var(--ink-dim);font-weight:500">on 403</span></div>
+    </div>
+    <div class="state error">
+      <div class="step">STATE 4 &middot; ERROR</div>
+      <div class="nm">Engine NACK</div>
+      <div class="mod">Retry, fallback, transient state tokens</div>
+      <div class="cnt"><b>7</b> pass &middot; <span style="color:var(--pass);font-weight:700">all token + UX confirmed</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Tier 1 &mdash; Real defects (file these) <span class="sub">&mdash; 5 bugs, 1 P1 Hard Lock + 1 P2 + 3 P3</span></div>
+  <div class="tier t1">
+    <h3>&#9888; Real bugs confirmed in both runs <span class="hint">5 defects &middot; all NOT FILED</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Proposed QA key</th><th>Sev</th><th>TC</th><th>State</th><th>What breaks &amp; why it matters</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="key">SN-62-FE-NEW-001</td>
+          <td><span class="sev p1">P1</span></td>
+          <td class="tc">TC-083</td>
+          <td><span class="stg all">All</span></td>
+          <td class="sum"><strong>Hard Lock violation &mdash; zero <code>data-i18n</code> attributes</strong> across the entire chip panel DOM. All chip strings are hardcoded English: "My Attendance", "Clock in", "Clock out", "Schedule", "Location", "Office HQ", "Break taken", "Organization Pulse", "Clocked in", "Attendance rate", "Late arrivals", etc.<span class="why">Spec &sect;16.1 lists i18n keys as a Hard Lock. Thai locale launch cannot ship without these. Same defect class as SN-70-FE-H8.</span></td>
+          <td><span class="st open">Open &middot; both runs</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="key">SN-62-FE-NEW-002</td>
+          <td><span class="sev p2">P2</span></td>
+          <td class="tc">TC-009</td>
+          <td><span class="stg all">All</span> <span class="stg broadcast">postMessage</span></td>
+          <td class="sum">Chip does <strong>not</strong> subscribe to <code>module:dismissPopovers</code> postMessage on <code>window</code>; panel remains open after broadcast.<span class="why">Spec [CC-10.3] requires cross-module dismiss coordination so other modules can close the panel when they open competing popovers. Neither <code>module:dismissPopovers</code> nor <code>shell:dismissPopovers</code> handled.</span></td>
+          <td><span class="st open">Open &middot; 2026-06-04</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="key">SN-62-FE-NEW-003</td>
+          <td><span class="sev p3">P3</span></td>
+          <td class="tc">TC-081</td>
+          <td><span class="stg all">All</span></td>
+          <td class="sum">Panel animation uses <code>enter</code> at <code>0.15s</code>; spec requires animation name <code>clockPanelIn</code> at <code>0.2s</code>.<span class="why">Cosmetic but a spec-bound contract drift &mdash; easy to fix during polish pass.</span></td>
+          <td><span class="st open">Open &middot; 2026-06-05</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="key">SN-62-FE-NEW-004</td>
+          <td><span class="sev p3">P3</span></td>
+          <td class="tc">TC-080</td>
+          <td><span class="stg all">All</span></td>
+          <td class="sum">No <code>hover:-translate-y-px</code> elevation shift on chip hover in any state. Chip uses <code>hover:bg-muted/80</code> only (color-only).<span class="why">Spec specifies <code>translateY(-1px)</code> on hover for chip elevation feedback per state.</span></td>
+          <td><span class="st open">Open &middot; 2026-06-04</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="key">SN-62-FE-NEW-005</td>
+          <td><span class="sev p3">P3</span></td>
+          <td class="tc">TC-090</td>
+          <td><span class="stg all">All</span></td>
+          <td class="sum">Role badge <code>&lt;status&gt;</code> element on topbar missing <code>data-spec-ref</code>. <strong>Improvement vs Run 1:</strong> location selector <code>[CC-7.3]</code> spec-ref WAS added between runs &check; &mdash; only the role badge remains.<span class="why">Bound Spec drift &mdash; affects QA's ability to grep for state coverage and the &sect;18.6 binding map audit (TC-091/092).</span></td>
+          <td><span class="st partial">Open &middot; partial fix observed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lead good" style="margin-top:6px">
+    <strong>Two role-mismatch artifacts (NOT bugs):</strong> TC-001 ("employee role hides Org Pulse") and TC-002 ("manager role shows Your Team") both fail because the test accounts are admin-roled. These will flip to PASS once the role provisioning gap is closed.
+  </div>
+
+  <div class="section-label">Tier 2 &mdash; Blockers by root cause <span class="sub">&mdash; what's stopping the rest of the 92 TCs from running</span></div>
+  <div class="tier tblock">
+    <h3>&#128274; Blocked TCs &mdash; what's needed to unblock <span class="hint">5 root causes &middot; 30+ TCs total</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Root cause</th><th>TCs blocked</th><th>Fix needed</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Role provisioning gap (DOMINANT)</strong><div class="why" style="color:var(--ink-dim);font-size:12px;margin-top:3px">gelosprout2/3 are admin-role; can't punch (403)</div></td>
+          <td class="tc">TC-025, 026, 028, 030, 033, 038, 050, 063&ndash;067, 071 &middot; <strong>+ TC-REG-SN62-001/002/003</strong> &middot; + UI portions of TC-016/017/029/032/051/054/058/075</td>
+          <td>Grant <code>attendance.own.clock</code> to gelosprout2/3 OR provision new employee/manager-role accounts</td>
+          <td>PM / dev infra</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>DAILY_ATTENDANCE_*</code> fixtures</td>
+          <td class="tc">TC-043, 044, 045, 046, 060, 061, 062</td>
+          <td>Author API seed recipes for <code>DailyAttendance</code> with <code>current_session</code> set / null / done</td>
+          <td>QA infra</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>NO_CLOCK_PERM_USER</code> + <code>NO_PULSE_PERM_MANAGER</code> + <code>LEAVE_DAY_USER</code> + <code>DST_ENTITY</code> fixtures</td>
+          <td class="tc">TC-004, 005, 006, 052, 072</td>
+          <td>Provision permission-restricted users + leave-state fixture + Australia/Sydney entity</td>
+          <td>QA infra</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Locale switch mechanism unknown</td>
+          <td class="tc">TC-084, 085</td>
+          <td>Document how <code>lang=th</code> propagates (cookie / header / user preference API). Likely dependent on TC-083 fix first.</td>
+          <td>FE owner</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Out-of-band: CI tooling + manual screen reader</td>
+          <td class="tc">TC-089 (NVDA), TC-091 (CI snapshot suite), TC-092 (spec coverage)</td>
+          <td>Manual NVDA session + CI snapshot fixture commits &mdash; not browser-executable</td>
+          <td>QA + CI</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Confirmed working <span class="sub">&mdash; what testing did verify (40 PASSes)</span></div>
+  <div class="tier tdone">
+    <h3>&check; Verified behavior <span class="hint">selected highlights from 40 PASS TCs</span></h3>
+    <table>
+      <thead><tr><th>Area</th><th>TCs</th><th>What's confirmed working</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Panel + chip basic UX</strong></td>
+          <td class="tc">TC-007, TC-008, TC-010</td>
+          <td>Panel opens in ~4ms (well under 200ms budget); outside-click closes; header sub-label binds entity name + timezone (<code>"QA Testing &middot; Asia/Bangkok"</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>State machine</strong></td>
+          <td class="tc">TC-023, TC-031, TC-034, TC-037, TC-039</td>
+          <td>Optimistic transition at t+53ms; NACK arrives at t+165ms; active &rarr; done is terminal (no re-arm); Clock In button hidden in done; primary button hidden in done; cold-reload after done restores done (not pending).</td>
+        </tr>
+        <tr>
+          <td><strong>Error state</strong></td>
+          <td class="tc">TC-055, TC-056, TC-057, TC-059</td>
+          <td>Error state uses <code>--sn-error*</code> tokens (not hardcoded red); "Try again" label + "Clock-in failed &mdash; retry" state line; retry-window timeout auto-reverts chip to pending (confirmed 3x).</td>
+        </tr>
+        <tr>
+          <td><strong>Token compliance</strong></td>
+          <td class="tc">TC-082</td>
+          <td>No hardcoded hex colors anywhere in chip DOM; success / muted design tokens used per spec; active state = success, done state = muted.</td>
+        </tr>
+        <tr>
+          <td><strong>Details zone</strong></td>
+          <td class="tc">TC-021, TC-035, TC-042, TC-053</td>
+          <td>Location selector hides in active/done; done-state details zone shows all 5 rows (Clock in 06:13, Clock out 14:12, Schedule 09:00&ndash;18:00, Location Office HQ, Break taken 0 min); break-punch buttons NOT rendered in any state (single-session beta scope); live time uses entity timezone.</td>
+        </tr>
+        <tr>
+          <td><strong>Wire contract (UI capture)</strong></td>
+          <td class="tc">TC-016, TC-017, TC-048</td>
+          <td>Clock In payload structure verified via fetch interceptor; <code>eventType</code> is PascalCase on the wire; <code>shell:entityChange</code> updates header sub-label correctly.</td>
+        </tr>
+        <tr>
+          <td><strong>Accessibility</strong></td>
+          <td class="tc">TC-086, TC-087, TC-088</td>
+          <td>Chip keyboard-focusable (<code>tabIndex=0</code>, <code>focus-visible:ring</code>); Enter opens panel; radiogroup role + ArrowRight navigation on location selector; Clock Out button has <code>aria-label="Clock Out"</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Visual states</strong></td>
+          <td class="tc">TC-077, TC-078, TC-014, TC-015, TC-076</td>
+          <td>Active green chip ("Clocked in", Clock Out button, all details rows); done muted chip ("Clocked out for today", no primary button); default location, location persistence, pending visual.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Open dev questions <span class="sub">&mdash; surfaced by testing, need FE clarification</span></div>
+  <div class="themes">
+    <div class="theme">
+      <h4>1. <code>shell:clockSync</code> transport</h4>
+      <p><code>window.addEventListener('message', ...)</code> did not capture broadcasts during Run 2. Is the chip using <code>BroadcastChannel</code>, iframe <code>postMessage</code> with a target window, or a different bus entirely?</p>
+      <p>Affects verification approach for TC-018 + TC-063&ndash;067 (broadcast contract integrity, which is one of the 3 regression candidates).</p>
+      <div class="chips"><span class="key">TC-018</span><span class="key">TC-063&ndash;067</span><span class="key">TC-REG-SN62-003</span></div>
+    </div>
+    <div class="theme">
+      <h4>2. Locale switching mechanism</h4>
+      <p><code>?lang=th</code> URL parameter did not switch locale (<code>htmlLang</code> stayed <code>en</code>, no Thai characters rendered).</p>
+      <p>How does Thai locale activation propagate &mdash; cookie, header, user preference API? Likely meaningful only after TC-083 (<code>data-i18n</code> keys exist) is fixed.</p>
+      <div class="chips"><span class="key">TC-083</span><span class="key">TC-084</span><span class="key">TC-085</span></div>
+    </div>
+    <div class="theme">
+      <h4>3. MyAttendance read-mirror</h4>
+      <p>Sidebar shows "My Attendance &mdash; Soon". TCs verifying <code>shell:clockSync</code> subscriber behavior in MyAttendance cannot run until that module ships.</p>
+      <p>Cross-module verification deferred to post-MyAttendance deploy.</p>
+      <div class="chips"><span class="key">TC-036</span><span class="key">TC-060</span><span class="key">TC-066</span></div>
+    </div>
+    <div class="theme">
+      <h4>4. Spec drift after Run 1</h4>
+      <p>Between 2026-06-04 and 2026-06-05, the location selector picked up <code>data-spec-ref="[CC-7.3]"</code> (was missing). Half of TC-090 is now passing.</p>
+      <p>Suggests active polish work on Bound Spec coverage; coordinate with FE to land role-badge spec-ref next.</p>
+      <div class="chips"><span class="key">TC-090</span><span class="key">[CC-7.3]</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Recommended next actions <span class="sub">&mdash; in priority order</span></div>
+  <div class="actions">
+    <ol>
+      <li><span class="dot r"></span><strong>Reprovision EMPLOYEE/MANAGER accounts</strong> with <code>attendance.own.clock</code> permission &mdash; or add new env aliases pointing to properly-roled accounts. Unblocks 28+ TCs and all 3 regression candidates. Without this, the chip's core flows are unverifiable.</li>
+      <li><span class="dot r"></span><strong>File <code>SN-62-FE-NEW-001</code> (i18n Hard Lock)</strong> as P1 SN ticket &mdash; blocks Thai locale ship. This is a known FE pattern (same defect class as SN-70-FE-H8) &mdash; consider a coordinated i18n sweep across modules.</li>
+      <li><span class="dot y"></span><strong>File <code>SN-62-FE-NEW-002</code> (<code>module:dismissPopovers</code>)</strong> as P2 &mdash; cross-module dismiss coordination broken.</li>
+      <li><span class="dot y"></span><strong>Resolve Jira ticket-status drift</strong> &mdash; transition SN-63 (FE) / SN-64 (BE) from <code>Backlog</code> to a state matching reality (chip is deployed), or document why state lags. Avoid surprise rollbacks.</li>
+      <li><span class="dot g"></span><strong>File <code>SN-62-FE-NEW-003/004/005</code></strong> as a single polish ticket (animation timing, hover elevation, role-badge spec-ref) if scope allows; otherwise three small P3s.</li>
+      <li><span class="dot g"></span><strong>Author <code>DailyAttendance</code> API seed recipes</strong> in <code>docs/qa/api-payloads/</code> &mdash; unblocks Tier 2 cold-reload TCs (TC-043&ndash;046, TC-060&ndash;062).</li>
+      <li><span class="dot g"></span><strong>Clarify <code>shell:clockSync</code> transport with FE</strong> before next run &mdash; fix the broadcast verification approach.</li>
+      <li><span class="dot g"></span><strong>Run orchestrator API pass</strong> for the 7 API-tagged TCs (TC-022, 047, 049, 061, 068, 069, 070) &mdash; uuidv7 idempotency, entity_id on event, UTC stored values, error-state zero-write, 23:55/midnight auto-close, overnight scheduled shift.</li>
+    </ol>
+  </div>
+
+  <div class="section-label">Source artifacts</div>
+  <div class="actions" style="font-size:13px;color:var(--ink-2)">
+    <ul style="margin:6px 0 0 0;padding-left:20px;line-height:1.8">
+      <li><strong>Binding contract:</strong> <code>docs/features/SN-62/TT_ClockChip_TestCases.md</code> (92 TCs, PM-curated)</li>
+      <li><strong>Spec:</strong> <code>docs/features/SN-62/TT_ClockChip_Spec.md</code> (100 KB; &sect;9 ACs in GIVEN/WHEN/THEN, &sect;11 state machine, &sect;15 edge cases)</li>
+      <li><strong>Local TCs:</strong> <code>docs/qa/test-cases/SN-62/test-cases.md</code> (mirrored 1:1 with binding contract)</li>
+      <li><strong>Run 1 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-04_15-17.md</code> &mdash; 18P / 4F / 54B / 16S</li>
+      <li><strong>Run 2 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-05_09-22.md</code> &mdash; 22P / 7F / 18B</li>
+      <li><strong>Run 3 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-06_fullreg.md</code> &mdash; 42P / 7F / 2 PARTIAL / 0 BLOCKED (clock-in 403 fix)</li>
+      <li><strong>Markdown consolidated:</strong> <code>docs/qa/runs/2026-06-05_sn-62-clock-chip.md</code></li>
+      <li><strong>Screenshots:</strong> <code>docs/qa/test-cases/SN-62/results/screenshots/</code> (14 files across both runs)</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  Generated 2026-06-05 &middot; Updated 2026-06-06 (Run 3 — 403 fix) &middot; SN-62 [CC] Clock In/Out Chip &middot; <code>docs/qa/test-cases/SN-62/results/SN-62_Execution_Report_standalone.html</code>
+</footer>
+
+</body>
+</html>

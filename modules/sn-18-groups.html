@@ -74,6 +74,155 @@ footer{max-width:1200px;margin:0 auto;padding:16px;color:var(--ink-dim);font-siz
 <main>
 
 <!-- =================================================================
+     2026-06-06 FULL REGRESSION RUN
+     Admin: richardtest / Richard Losande | Entity: Test TH Regional
+     Baseline: 2026-06-05_regression.md (johnangelol) — 30/2/1/6
+     ================================================================= -->
+<section class="card" id="regression-2026-06-06" style="border-left:4px solid #16a34a">
+  <h2 style="display:flex;align-items:center;gap:10px">
+    <span style="background:#16a34a;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:6px;letter-spacing:.04em">FULL REGRESSION</span>
+    2026-06-06 Full Regression
+  </h2>
+  <p style="font-size:13px;color:var(--ink-dim);margin:0 0 14px">
+    <strong>Date:</strong> 2026-06-06 04:32&ndash;04:57 &middot;
+    <strong>Admin:</strong> richardtest / Richard Losande (admin) &middot;
+    <strong>Manager:</strong> gelosprout2@gmail.com (Gelo Manager) &middot;
+    <strong>Employee:</strong> gelosprout3@gmail.com (Gelo Employee3) &middot;
+    <strong>Entity:</strong> Test TH Regional &middot;
+    <strong>Env:</strong> qa &middot;
+    <strong>Baseline:</strong> 2026-06-05_regression.md (johnangelol &mdash; 30 pass / 2 fail / 1 partial / 6 blocked)
+  </p>
+
+  <!-- Graded counts -->
+  <div class="summary-grid" style="margin-bottom:18px">
+    <div class="stat-tile pass"><div class="label">PASS</div><div class="value">38</div></div>
+    <div class="stat-tile fail"><div class="label">FAIL</div><div class="value">1</div></div>
+    <div class="stat-tile partial"><div class="label">PARTIAL</div><div class="value">1</div></div>
+    <div class="stat-tile blocked"><div class="label">BLOCKED</div><div class="value">4</div></div>
+    <div class="stat-tile"><div class="label">SKIP / API-deferred</div><div class="value" style="font-size:20px">21</div></div>
+    <div class="stat-tile"><div class="label">Total graded UI</div><div class="value" style="font-size:20px">43</div></div>
+    <div class="stat-tile pass"><div class="label">Pass rate</div><div class="value" style="font-size:20px">88%</div></div>
+  </div>
+
+  <!-- Delta vs 2026-06-05 -->
+  <h3 style="font-size:15px;margin:0 0 8px">Delta vs 2026-06-05</h3>
+  <table style="margin-bottom:18px">
+    <thead><tr><th>Metric</th><th>2026-06-05</th><th>2026-06-06</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td>PASS</td><td>30</td><td><strong>38</strong></td><td style="color:var(--pass)">+8</td></tr>
+      <tr><td>FAIL</td><td>2</td><td><strong>1</strong></td><td style="color:var(--pass)">&minus;1</td></tr>
+      <tr><td>PARTIAL</td><td>1</td><td><strong>1</strong></td><td>&plusmn;0</td></tr>
+      <tr><td>BLOCKED</td><td>6</td><td><strong>4</strong></td><td style="color:var(--pass)">&minus;2</td></tr>
+      <tr><td>Coverage (graded)</td><td>39</td><td><strong>43</strong></td><td style="color:var(--pass)">+4</td></tr>
+      <tr><td>Pass rate</td><td>77%</td><td><strong>88%</strong></td><td style="color:var(--pass)">+11 pp</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Fixes confirmed -->
+  <h3 style="font-size:15px;margin:0 0 8px">Fixes Confirmed (BLOCKED/FAIL &rarr; PASS)</h3>
+  <div class="defect-list" style="margin-bottom:18px">
+    <article class="defect" style="background:#f0fdf4;border-left-color:var(--pass)">
+      <div class="defect-head">
+        <span class="pri" style="background:var(--pass)">FIX</span>
+        <code class="defect-key">TC-002</code>
+        <h3 style="margin:4px 0 0">Manager role &mdash; Groups not in nav (RBAC confirmed)</h3>
+      </div>
+      <p>
+        Previously <strong>BLOCKED</strong> (gelosprout2 was incorrectly provisioned as admin in the prior run).
+        This run confirmed gelosprout2 = Manager in Test TH Regional: no Groups link in nav,
+        direct URL <code>/settings/groups</code> redirected to <code>/</code>.
+        RBAC gate working correctly for Manager role.
+      </p>
+    </article>
+    <article class="defect" style="background:#f0fdf4;border-left-color:var(--pass);margin-top:10px">
+      <div class="defect-head">
+        <span class="pri" style="background:var(--pass)">FIX</span>
+        <code class="defect-key">TC-003</code>
+        <h3 style="margin:4px 0 0">Employee role &mdash; Groups not accessible (RBAC confirmed)</h3>
+      </div>
+      <p>
+        Previously <strong>BLOCKED</strong> (gelosprout3 role was unconfirmed).
+        This run confirmed gelosprout3 = Employee in Test TH Regional: no Groups link in nav,
+        direct URL redirected. RBAC gate working correctly for Employee role.
+      </p>
+    </article>
+    <article class="defect" style="background:#f0fdf4;border-left-color:var(--pass);margin-top:10px">
+      <div class="defect-head">
+        <span class="pri" style="background:var(--pass)">FIX</span>
+        <code class="defect-key">TC-032</code>
+        <h3 style="margin:4px 0 0">AC-LP1 &mdash; Leave Policy picker confirmed as johnangelol-403 artifact</h3>
+      </div>
+      <p>
+        Previously <strong>FAIL</strong> (HTTP 403 under johnangelol in Test TH Regional on 2026-06-05).
+        Under richardtest this run the Leave Policy tab loads correctly &mdash; picker shows
+        &ldquo;Leave Policy / Work Schedule&rdquo; tabs with active policies visible.
+        <strong>Confirmed env/user permission artifact, not a product regression.</strong>
+        TC-034 also verified via Used By tab (leave policy + Unlink button present).
+      </p>
+    </article>
+  </div>
+
+  <!-- Regressions -->
+  <h3 style="font-size:15px;margin:0 0 8px">Regressions vs 2026-06-05</h3>
+  <p style="font-size:14px;color:var(--pass);margin:0 0 18px"><strong>NONE</strong> &mdash; no new regressions detected this run.</p>
+
+  <!-- Active defects -->
+  <h3 style="font-size:15px;margin:0 0 8px">Active Defects (Unchanged)</h3>
+  <div class="defect-list" style="margin-bottom:18px">
+    <article class="defect p2">
+      <div class="defect-head">
+        <span class="pri p2">OPEN</span>
+        <code class="defect-key">SNOPS-DB001</code>
+        <h3 style="margin:4px 0 0">TC-013 &mdash; Duplicate-name soft warning on blur absent</h3>
+      </div>
+      <p>
+        Typed &ldquo;Bangkok Office&rdquo; into name field, triggered blur &mdash; no soft warning appeared.
+        Pre-existing defect unchanged across richardtest and johnangelol accounts since 2026-06-03.
+        <strong>No new defects filed this run (&plusmn;0).</strong>
+      </p>
+    </article>
+  </div>
+
+  <!-- Role-gate summary -->
+  <h3 style="font-size:15px;margin:0 0 8px">Role-Gate Coverage (Priority 1)</h3>
+  <table style="margin-bottom:18px">
+    <thead><tr><th>Account</th><th>Role</th><th>TC</th><th>Result</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>richardtest</code></td><td>Admin</td><td>TC-001</td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Full access: Groups page, Create, edit, deactivate</td>
+      </tr>
+      <tr>
+        <td><code>gelosprout2@gmail.com</code></td><td>Manager</td><td>TC-002</td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>No Groups link in nav; direct URL blocked</td>
+      </tr>
+      <tr>
+        <td><code>gelosprout3@gmail.com</code></td><td>Employee</td><td>TC-003</td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>No Groups link in nav; direct URL blocked</td>
+      </tr>
+      <tr>
+        <td><em>No user provisioned</em></td><td>RBAC-limited (view-only)</td><td>TC-004, TC-005, TC-006</td>
+        <td><span class="badge blocked">BLOCKED</span></td>
+        <td>No view-only user available in Test TH Regional</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="summary-text" style="margin-top:6px">
+    <strong>Overall result: PARTIAL</strong> &mdash;
+    38 PASS / 1 FAIL (TC-013, pre-existing SNOPS-DB001) / 1 PARTIAL (TC-027) / 4 BLOCKED &middot;
+    88% pass rate (38/43 graded) &middot;
+    RBAC role-gate fully verified for Admin, Manager, Employee &middot;
+    TC-032 leave-policy 403 confirmed as johnangelol-403 artifact under richardtest &middot;
+    No new regressions &middot; No new defects filed.
+    Source: <code>docs/qa/test-cases/SN-18/results/2026-06-06_fullreg.md</code>
+  </p>
+</section>
+
+<!-- =================================================================
      2026-06-05 REGRESSION RUN UPDATE
      Admin: johnangelol@sprout.ph | Entity: Test TH Regional
      Baseline: 2026-06-03_14-57.md (richardtest, QA Testing entity)
