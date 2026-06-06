@@ -118,23 +118,27 @@
     <strong>05 Jun — full regression of 8 modules (entity Test TH Regional, ~150 employees).</strong> <strong style="color:var(--pass)">0 product regressions</strong> — no previously-passing TC broke. Confirmed fixes: <strong>SN-2</strong> (18 TH national holidays now seeded + Company-holiday CRUD), <strong>SN-22</strong> (Policy Assignments card + Picker), <strong>SN-18</strong> (<code>/groups/.../reactivate</code> 200), <strong>SN-26</strong> (failed-import detail panel + "Fix and retry"). One new cross-cutting UX bug found: <strong>silent failure on write 403</strong> (SN-6, SN-10, SN-14) — failed Settings saves show no toast/banner. <em>Caveat (not a product defect):</em> the regression admin <code>johnangelol@sprout.ph</code> hit endpoint-specific write-403s on company/leavepolicies/entities/departments, blocking some save/edit TCs — investigate whether the role lacks write scopes or BFF authz is inconsistent. Source: <code>docs/qa/curation/health-2026-06-05.md</code>.
   </div>
 
+  <div class="lead" style="border-left-color:var(--p1);background:#fef2f2;margin-top:10px">
+    <strong>06 Jun — SN-54 (Time Off — Policy Administration) first execution.</strong> New module #12, full 113-TC suite run as <code>richardtest</code> on entity <code>QA Testing</code> (UI via Playwright at <code>/settings/leave-policies</code> + API via bearer-replay). 40 PASS / 17 FAIL / 29 PARTIAL / 27 BLOCKED. <strong>7 defects filed to SNOPS</strong> (<a href="https://sprouthq.atlassian.net/browse/SNOPS-167">SNOPS-167</a>&ndash;<a href="https://sprouthq.atlassian.net/browse/SNOPS-173">173</a>): <strong>2 P1</strong> &mdash; cross-entity write guard absent (create a policy in a foreign entity &rarr; 201) and Publish flow broken (POST with no auth header; no modal); <strong>5 P2</strong> &mdash; statutory field locks not enforced, company <code>unlimited=true</code> accepted, tiered toggle dead, Reka switches inert, stale <code>effectiveDate</code> 400. 14 further P3/P4 documented, not filed. Server-side <strong>statutory floor guard</strong> and <strong>SD-12 append-only</strong> both confirmed. Source: <code>docs/qa/test-cases/SN-54/results/2026-06-06_16-05.md</code>.
+  </div>
+
   <div class="lead" style="border-left-color:var(--manage);background:#f0f5ff;margin-top:10px">
     <strong>05 Jun — SN-62 (Clock In/Out chip) synced.</strong> Functional core works (chip deployed; admin can clock in/out). <strong>5 FE defects</strong> added to this curation under the <em>Manage</em> stage (daily attendance): <code>SN-62-FE-NEW-001</code> P1 i18n Hard Lock (TC-083), <code>SN-62-FE-NEW-002</code> P2 dismiss-on-outside-click / <code>module:dismissPopovers</code> (TC-009), and three P3 polish items (<code>-003</code> animation TC-081, <code>-004</code> hover elevation TC-080, <code>-005</code> role-badge spec-ref TC-090). <em>Environment caveat (NOT a defect):</em> SN-62's remaining TCs are blocked because <code>gelosprout2</code>/<code>gelosprout3</code> carry the admin role (not employee/manager) &rarr; HTTP 403 on Clock In (missing <code>attendance.own.clock</code> scope). Reprovision roles to unblock the active/done-state TCs.
   </div>
 
-  <div class="section-label">At a glance <span class="sub">— reconciled to _snapshot.json (2026-06-06) &middot; 104 total / 43 open / 61 Done across all 11 modules</span></div>
+  <div class="section-label">At a glance <span class="sub">— reconciled to _snapshot.json (2026-06-06) &middot; 111 total / 50 open / 61 Done across all 12 modules</span></div>
   <div class="lead" style="border-left-color:var(--p1);background:#fff;margin:0 0 14px">
-    <strong>43 open defects across all modules (+5 vs 2026-06-05)</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
+    <strong>50 open defects across all modules (+7 vs 2026-06-05 — 7 SN-54 filed)</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
     deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full inventory.
-    The full counts trace to <code>_snapshot.json</code> (104 distinct &middot; 61 Done &middot; 43 open). The 2026-06-06 RBAC-wiring run added <strong>9 new defects</strong> (NEW-BE-H3, NEW-0606-01, Gender-to-Manager + 2 SN-22, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and <strong>verified 4 fixed</strong> (SN-70 FE-M3/FE-M5, SN-2 SN2-FE004/FE005).
+    The full counts trace to <code>_snapshot.json</code> (111 distinct &middot; 61 Done &middot; 50 open). The 2026-06-06 RBAC-wiring run added <strong>9 new defects</strong> (NEW-BE-H3, NEW-0606-01, Gender-to-Manager + 2 SN-22, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and <strong>verified 4 fixed</strong> (SN-70 FE-M3/FE-M5, SN-2 SN2-FE004/FE005).
   </div>
   <div class="kpis">
-    <div class="kpi"><div class="l">Total defects</div><div class="v">104 <span style="font-size:15px;color:var(--ink-dim)">(+9)</span></div><div class="n">_snapshot.json &middot; 61 Done + 43 open</div></div>
-    <div class="kpi"><div class="l">Open defects</div><div class="v">43 <span style="font-size:15px;color:var(--ink-dim)">(+5)</span></div><div class="n">P1 13 + P2 19 + P3 11 = 43</div></div>
-    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">13 <span style="font-size:15px;color:var(--ink-dim)">(+5)</span></div><div class="n">+NEW-BE-H3, NEW-0606-01, Gender-to-Manager, SN-10 FE012/FE013</div></div>
-    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">19 <span style="font-size:15px;color:var(--ink-dim)">(+3)</span></div><div class="n">+TC-081 tax, TC-044 address, SN-26 TC-044 retry</div></div>
-    <div class="kpi p3"><div class="l">P3 / Med — open</div><div class="v">11 <span style="font-size:15px;color:var(--ink-dim)">(-3)</span></div><div class="n">+RBAC-HOL-001; −FE-M3/FE-M5/SN2-FE004/FE005 fixed</div></div>
-    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">61 <span style="font-size:15px;color:var(--ink-dim)">(+4)</span></div><div class="n">_snapshot.json defectsClosed</div></div>
+    <div class="kpi"><div class="l">Total defects</div><div class="v">111 <span style="font-size:15px;color:var(--ink-dim)">(+7)</span></div><div class="n">_snapshot.json &middot; 61 Done + 50 open</div></div>
+    <div class="kpi"><div class="l">Open defects</div><div class="v">50 <span style="font-size:15px;color:var(--ink-dim)">(+7)</span></div><div class="n">P1 15 + P2 24 + P3 11 = 50</div></div>
+    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">15 <span style="font-size:15px;color:var(--ink-dim)">(+2)</span></div><div class="n">+SN-54 BE001 (cross-entity write), FE001 (publish broken) — both filed SNOPS-167/168</div></div>
+    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">24 <span style="font-size:15px;color:var(--ink-dim)">(+5)</span></div><div class="n">+SN-54 FE002/BE002/FE003/FE004/FE005 (SNOPS-169–173)</div></div>
+    <div class="kpi p3"><div class="l">P3 / Med — open</div><div class="v">11</div><div class="n">SN-54 P3/P4 (14) documented, not filed</div></div>
+    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">61</div><div class="n">_snapshot.json defectsClosed</div></div>
   </div>
 
   <div class="section-label">Where it hurts on the journey <span class="sub">— open defect count &middot; P1 count per stage &middot; post-retest</span></div>
@@ -229,9 +233,27 @@
     </table>
   </div>
 
+  <div class="section-label">Tier 2c &mdash; SN-54 Time Off Policy Admin <span class="sub">— configure leave policies &middot; manage/organize stage &middot; first execution 06 Jun &middot; 7 filed (SNOPS-167–173)</span></div>
+  <div class="tier t2">
+    <h3>🔴 Time Off — Policy Administration (SN-54) — P1/P2 filed <span class="hint">2 P1 + 5 P2 &middot; all filed to SNOPS &middot; +14 P3/P4 documented</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Defect</th><th>Sev</th><th>Stage</th><th>What breaks</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="key">SN-54-BE001</td><td><span class="sev p1">P1</span></td><td><span class="stg org">Organize</span></td><td class="sum"><strong>Security:</strong> cross-entity write guard absent &mdash; an admin scoped to one entity can <code>POST /leavepolicies</code> with a foreign <code>entityId</code> &rarr; <strong>201 Created</strong> in the other entity. <span class="why">TC-106.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-167" style="color:inherit">SNOPS-167</a></span></td></tr>
+        <tr><td>2</td><td class="key">SN-54-FE001</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Publish flow broken &mdash; kebab/panel Publish POST has <strong>no Authorization header</strong> (net::ERR_FAILED); no confirmation modal. Primary admin action non-functional. <span class="why">TC-059/060/061.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-168" style="color:inherit">SNOPS-168</a></span></td></tr>
+        <tr><td>3</td><td class="key">SN-54-FE002</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>Compliance:</strong> statutory locked fields (pay_type / day_unit) editable in edit mode; no lock icons; AC-E3 not enforced. <span class="why">TC-026/046/058.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-169" style="color:inherit">SNOPS-169</a></span></td></tr>
+        <tr><td>4</td><td class="key">SN-54-BE002</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Company policy accepts <code>entitlementUnlimited=true</code> &rarr; 201; T3.6 beta boundary not enforced server-side. <span class="why">TC-109.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-170" style="color:inherit">SNOPS-170</a></span></td></tr>
+        <tr><td>5</td><td class="key">SN-54-FE003</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Tiered entitlement non-functional &mdash; Base/Tiered/Unlimited buttons no-op; tier builder never renders. <span class="why">TC-029.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-171" style="color:inherit">SNOPS-171</a></span></td></tr>
+        <tr><td>6</td><td class="key">SN-54-FE004</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Reka switches won't toggle &mdash; Approval-required &amp; Medical-cert-required inert; blocks approval-chain + request config. <span class="why">TC-032/033/034.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-172" style="color:inherit">SNOPS-172</a></span></td></tr>
+        <tr><td>7</td><td class="key">SN-54-FE005</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Edit form sends stale (past) <code>effectiveDate</code> &rarr; 400; blocks editing seeded policies; masked the floor check. <span class="why">TC-018/057/080.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-173" style="color:inherit">SNOPS-173</a></span></td></tr>
+        <tr><td>+</td><td class="key">SN-54 P3/P4</td><td><span class="sev p3">P3/P4</span></td><td><span class="stg manage">Manage</span></td><td class="sum">14 further defects documented &mdash; concurrent-edit 409 vs E-3, draft toggle clickable, SSF in wizard, last-approval ×, carry-over expiry, floor inline error, work-week deep-link, groups inline contract, delete worker-count, bulk modal, statutory toggle color, stub DRAFT badge, copy mismatches, metadata blank. <span class="why">See SN-54 report.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">defer</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="section-label">Tier 3 &mdash; High (open P2) <span class="sub">— journey-relevant items listed first</span></div>
   <div class="tier t3">
-    <h3>🟠 P2 <span class="hint">+3 NEW (2026-06-06) &middot; 19 open total</span></h3>
+    <h3>🟠 P2 <span class="hint">+3 NEW (2026-06-06) &middot; 24 open total (incl. 5 SN-54 in the SN-54 section above)</span></h3>
     <table>
       <thead><tr><th>Defect</th><th>Sev</th><th>Stage</th><th>Summary</th><th>Status</th><th>Jira</th></tr></thead>
       <tbody>
