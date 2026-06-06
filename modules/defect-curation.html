@@ -126,17 +126,17 @@
     <strong>05 Jun — SN-62 (Clock In/Out chip) synced.</strong> Functional core works (chip deployed; admin can clock in/out). <strong>5 FE defects</strong> added to this curation under the <em>Manage</em> stage (daily attendance): <code>SN-62-FE-NEW-001</code> P1 i18n Hard Lock (TC-083), <code>SN-62-FE-NEW-002</code> P2 dismiss-on-outside-click / <code>module:dismissPopovers</code> (TC-009), and three P3 polish items (<code>-003</code> animation TC-081, <code>-004</code> hover elevation TC-080, <code>-005</code> role-badge spec-ref TC-090). <em>Environment caveat (NOT a defect):</em> SN-62's remaining TCs are blocked because <code>gelosprout2</code>/<code>gelosprout3</code> carry the admin role (not employee/manager) &rarr; HTTP 403 on Clock In (missing <code>attendance.own.clock</code> scope). Reprovision roles to unblock the active/done-state TCs.
   </div>
 
-  <div class="section-label">At a glance <span class="sub">— reconciled to _snapshot.json (2026-06-06) &middot; 111 total / 50 open / 61 Done across all 12 modules</span></div>
+  <div class="section-label">At a glance <span class="sub">— reconciled to _snapshot.json (2026-06-06) &middot; 114 total / 53 open / 61 Done across all 13 modules</span></div>
   <div class="lead" style="border-left-color:var(--p1);background:#fff;margin:0 0 14px">
-    <strong>50 open defects across all modules (+7 vs 2026-06-05 — 7 SN-54 filed)</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
+    <strong>53 open defects across all modules (+10 vs 2026-06-05 — 7 SN-54 + 3 SN-88 filed)</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
     deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full inventory.
     The full counts trace to <code>_snapshot.json</code> (111 distinct &middot; 61 Done &middot; 50 open). The 2026-06-06 RBAC-wiring run added <strong>9 new defects</strong> (NEW-BE-H3, NEW-0606-01, Gender-to-Manager + 2 SN-22, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and <strong>verified 4 fixed</strong> (SN-70 FE-M3/FE-M5, SN-2 SN2-FE004/FE005).
   </div>
   <div class="kpis">
-    <div class="kpi"><div class="l">Total defects</div><div class="v">111 <span style="font-size:15px;color:var(--ink-dim)">(+7)</span></div><div class="n">_snapshot.json &middot; 61 Done + 50 open</div></div>
-    <div class="kpi"><div class="l">Open defects</div><div class="v">50 <span style="font-size:15px;color:var(--ink-dim)">(+7)</span></div><div class="n">P1 15 + P2 24 + P3 11 = 50</div></div>
-    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">15 <span style="font-size:15px;color:var(--ink-dim)">(+2)</span></div><div class="n">+SN-54 BE001 (cross-entity write), FE001 (publish broken) — both filed SNOPS-167/168</div></div>
-    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">24 <span style="font-size:15px;color:var(--ink-dim)">(+5)</span></div><div class="n">+SN-54 FE002/BE002/FE003/FE004/FE005 (SNOPS-169–173)</div></div>
+    <div class="kpi"><div class="l">Total defects</div><div class="v">114 <span style="font-size:15px;color:var(--ink-dim)">(+10)</span></div><div class="n">_snapshot.json &middot; 61 Done + 53 open</div></div>
+    <div class="kpi"><div class="l">Open defects</div><div class="v">53 <span style="font-size:15px;color:var(--ink-dim)">(+10)</span></div><div class="n">P1 16 + P2 26 + P3 11 = 53</div></div>
+    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">16 <span style="font-size:15px;color:var(--ink-dim)">(+3)</span></div><div class="n">+SN-88 FE003 (leave hard-lock, SNOPS-174) · SN-54 BE001 (cross-entity write), FE001 (publish broken) — both filed SNOPS-167/168</div></div>
+    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">26 <span style="font-size:15px;color:var(--ink-dim)">(+7)</span></div><div class="n">+SN-88 FE001/FE002 (SNOPS-175/176) · SN-54 FE002/BE002/FE003/FE004/FE005 (SNOPS-169–173)</div></div>
     <div class="kpi p3"><div class="l">P3 / Med — open</div><div class="v">11</div><div class="n">SN-54 P3/P4 (14) documented, not filed</div></div>
     <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">61</div><div class="n">_snapshot.json defectsClosed</div></div>
   </div>
@@ -247,6 +247,19 @@
         <tr><td>6</td><td class="key">SN-54-FE004</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Reka switches won't toggle &mdash; Approval-required &amp; Medical-cert-required inert; blocks approval-chain + request config. <span class="why">TC-032/033/034.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-172" style="color:inherit">SNOPS-172</a></span></td></tr>
         <tr><td>7</td><td class="key">SN-54-FE005</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Edit form sends stale (past) <code>effectiveDate</code> &rarr; 400; blocks editing seeded policies; masked the floor check. <span class="why">TC-018/057/080.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-173" style="color:inherit">SNOPS-173</a></span></td></tr>
         <tr><td>+</td><td class="key">SN-54 P3/P4</td><td><span class="sev p3">P3/P4</span></td><td><span class="stg manage">Manage</span></td><td class="sum">14 further defects documented &mdash; concurrent-edit 409 vs E-3, draft toggle clickable, SSF in wizard, last-approval ×, carry-over expiry, floor inline error, work-week deep-link, groups inline contract, delete worker-count, bulk modal, statutory toggle color, stub DRAFT badge, copy mismatches, metadata blank. <span class="why">See SN-54 report.</span></td><td><span class="st notr">Open · NOT FILED</span></td><td><span class="jira">defer</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Tier 2d &mdash; SN-88 Homepage v1 <span class="sub">— role-adaptive dashboard at <code>/</code> &middot; first execution 06 Jun &middot; 3 filed (SNOPS-174&ndash;176)</span></div>
+  <div class="tier t2">
+    <h3>🔴 Homepage v1 (SN-88) — P1/P2 filed <span class="hint">1 P1 + 2 P2 &middot; all filed to SNOPS &middot; 10/12 executed · 170 BLOCKED (dev-CI / seeding)</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Defect</th><th>Sev</th><th>Stage</th><th>What breaks</th><th>Status</th><th>Jira</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="key">SN-88-FE003</td><td><span class="sev p1">P1</span></td><td><span class="stg manage">Manage</span></td><td class="sum"><strong>Hard-lock [HP-1.0]:</strong> "+ File leave" opens an inline "File a request" dialog on the Homepage &mdash; spec prohibits any leave form/modal on the Homepage (must deep-link). <span class="why">TC-075.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-174" style="color:inherit">SNOPS-174</a></span></td></tr>
+        <tr><td>2</td><td class="key">SN-88-FE001</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Layout-contract drift &mdash; live DOM uses <code>HOME-7.*</code> not spec <code>HP-2.*</code>; section order not Q4-locked (leave last); a "Customize" button implies a rearrangeable layout. Cascades into matrix selector matching. <span class="why">TC-022.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-175" style="color:inherit">SNOPS-175</a></span></td></tr>
+        <tr><td>3</td><td class="key">SN-88-FE002</td><td><span class="sev p2">P2</span></td><td><span class="stg manage">Manage</span></td><td class="sum">Week-strip "View full history &rarr;" is a no-op &mdash; does not deep-link to <code>/my-attendance</code> (§13 deep-link contract). <span class="why">TC-071.</span></td><td><span class="st open">Open · FILED</span></td><td><span class="jira"><a href="https://sprouthq.atlassian.net/browse/SNOPS-176" style="color:inherit">SNOPS-176</a></span></td></tr>
       </tbody>
     </table>
   </div>

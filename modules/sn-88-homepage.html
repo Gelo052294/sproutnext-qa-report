@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SN-88 &mdash; Homepage v1 QA Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg:#f1f5f9; --card:#fff; --ink:#0f172a; --ink-2:#334155; --ink-dim:#64748b; --line:#e2e8f0;
+    --p1:#b91c1c; --p1-bg:#fee2e2; --p2:#b45309; --p2-bg:#fef3c7; --p3:#475569; --p3-bg:#e2e8f0;
+    --pass:#15803d; --pass-bg:#dcfce7; --info:#1d4ed8; --info-bg:#dbeafe;
+    --t1:#7f1d1d; --t1-bg:#fef2f2; --t1-ac:#dc2626;
+    --pending:#475569; --pending-bg:#f1f5f9;
+    --active:#15803d; --active-bg:#dcfce7;
+    --done:#1d4ed8; --done-bg:#dbeafe;
+    --error:#b91c1c; --error-bg:#fee2e2;
+    --blocked:#9333ea; --blocked-bg:#f3e8ff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  header { background:linear-gradient(120deg,#0e7490 0%,#0891b2 55%,#0369a1 100%); color:#fff; padding:30px 44px 26px; }
+  header h1 { margin:0 0 8px; font-size:27px; font-weight:800; letter-spacing:-0.02em; }
+  header .meta { color:#cffafe; font-size:14px; font-weight:500; }
+  header .meta code { background:rgba(255,255,255,0.18); padding:1px 7px; border-radius:5px; color:#fff; }
+  main { max-width:1280px; margin:0 auto; padding:24px 20px 64px; }
+  .section-label { font-size:13px; font-weight:800; letter-spacing:0.06em; color:var(--ink-2); text-transform:uppercase; margin:32px 4px 14px; }
+  .section-label .sub { font-weight:500; text-transform:none; letter-spacing:0; color:var(--ink-dim); margin-left:10px; font-size:13px; }
+  .lead { background:var(--card); border:1px solid var(--line); border-left:5px solid var(--t1-ac); border-radius:10px; padding:16px 20px; font-size:14px; color:var(--ink-2); }
+  .lead strong { color:var(--ink); }
+  .lead.warn { border-left-color:var(--p1); background:#fef2f2; margin-top:10px; }
+  .lead.info { border-left-color:var(--info); background:var(--info-bg); margin-top:10px; }
+  .lead.good { border-left-color:var(--pass); background:#f0fdf4; margin-top:10px; }
+
+  /* Stat tiles — matches SN-2/SN-22/SN-70 convention */
+  .stat-tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-top:14px; }
+  .stat-tile { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .stat-tile .label { font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; font-weight:700; }
+  .stat-tile .value { font-size:26px; font-weight:700; margin-top:4px; }
+  .stat-tile .note { font-size:11.5px; color:var(--ink-dim); margin-top:4px; }
+  .stat-tile.pass .value { color:var(--pass); }
+  .stat-tile.fail .value { color:var(--p1); }
+  .stat-tile.partial .value { color:var(--p2); }
+  .stat-tile.blocked .value { color:var(--blocked); }
+  .stat-tile.skipped .value { color:var(--ink-dim); }
+
+  /* State strip */
+  .states { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:880px){ .states { grid-template-columns:1fr 1fr; } }
+  .state { background:var(--card); border:1px solid var(--line); border-radius:11px; padding:14px 15px; box-shadow:0 1px 3px rgba(15,23,42,.06); position:relative; overflow:hidden; }
+  .state::before { content:""; position:absolute; inset:0 auto 0 0; width:5px; }
+  .state.pending::before{background:var(--pending);}
+  .state.active::before{background:var(--active);}
+  .state.done::before{background:var(--done);}
+  .state.error::before{background:var(--error);}
+  .state .step { font-size:10.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.04em; }
+  .state .nm { font-size:15px; font-weight:800; margin:3px 0 8px; }
+  .state .mod { font-size:11.5px; color:var(--ink-dim); margin-bottom:9px; }
+  .state .cnt { font-size:13px; font-weight:600; color:var(--ink-2); }
+  .state .cnt b { font-size:20px; font-weight:800; color:var(--ink); }
+  .state .p1n { color:var(--p1); font-weight:800; }
+  .state .ok { color:var(--pass); font-weight:800; }
+  .state .bl { color:var(--blocked); font-weight:800; }
+
+  /* Tier cards */
+  .tier { background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 1px 3px rgba(15,23,42,.06); overflow:hidden; margin-bottom:18px; }
+  .tier > h3 { margin:0; padding:15px 22px; font-size:16px; font-weight:800; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; }
+  .tier.t1 > h3 { background:var(--t1-bg); color:var(--t1); }
+  .tier.t2 > h3 { background:var(--p1-bg); color:var(--p1); }
+  .tier.t3 > h3 { background:var(--p2-bg); color:var(--p2); }
+  .tier.t4 > h3 { background:var(--p3-bg); color:var(--p3); }
+  .tier.tdone > h3 { background:var(--pass-bg); color:var(--pass); }
+  .tier.tblock > h3 { background:var(--blocked-bg); color:var(--blocked); }
+  .tier > h3 .hint { font-weight:500; font-size:12.5px; color:var(--ink-dim); margin-left:auto; }
+
+  table { border-collapse:collapse; width:100%; font-size:13.5px; }
+  th { text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-2); font-weight:800; background:#f8fafc; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td { padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafcff; }
+  .key { font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; white-space:nowrap; }
+  .tc { font-family:ui-monospace,monospace; font-size:11.5px; font-weight:600; color:var(--info); }
+  .sev { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:800; white-space:nowrap; }
+  .sev.p1{ background:var(--p1-bg); color:var(--p1);} .sev.p2{ background:var(--p2-bg); color:var(--p2);} .sev.p3{ background:var(--p3-bg); color:var(--p3);}
+  .stg { display:inline-block; padding:2px 9px; border-radius:999px; font-size:10.5px; font-weight:700; white-space:nowrap; }
+  .stg.pending{ background:var(--pending-bg); color:var(--pending);} .stg.active{ background:var(--active-bg); color:var(--active);}
+  .stg.done{ background:var(--done-bg); color:var(--done);} .stg.error{ background:var(--error-bg); color:var(--error);}
+  .stg.all{ background:#f1f5f9; color:var(--ink-dim);} .stg.broadcast{ background:#fce7f3; color:#be185d;}
+  .st { font-size:11.5px; font-weight:700; white-space:nowrap; }
+  .st.open{ color:var(--p1);} .st.partial{ color:var(--p2);} .st.notr{ color:var(--ink-dim);} .st.fixed{ color:var(--pass);} .st.blocked{ color:var(--blocked);}
+  td .jira { font-family:ui-monospace,monospace; font-size:11px; color:var(--info); }
+  td.sum { color:var(--ink-2); }
+  td.sum .why { display:block; color:var(--ink-dim); font-size:12px; margin-top:3px; }
+
+  .themes { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:880px){ .themes { grid-template-columns:1fr; } }
+  .theme { background:var(--card); border:1px solid var(--line); border-top:4px solid #0e7490; border-radius:11px; padding:16px 18px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .theme h4 { margin:0 0 8px; font-size:14.5px; }
+  .theme p { margin:0 0 8px; font-size:13px; color:var(--ink-2); }
+  .theme .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .theme .chips .key { background:#f1f5f9; padding:2px 7px; border-radius:5px; }
+
+  .actions { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 22px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  .actions ol { margin:6px 0 0 0; padding-left:20px; }
+  .actions li { margin-bottom:9px; font-size:13.5px; color:var(--ink-2); }
+  .actions li strong { color:var(--ink); }
+  .actions .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:middle; }
+  .actions .dot.r{ background:var(--p1);} .actions .dot.y{ background:var(--p2);} .actions .dot.g{ background:var(--pass);}
+
+  footer { color:var(--ink-dim); font-size:12.5px; padding:26px 4px 0; text-align:center; }
+  footer code { background:#e9eef3; padding:1px 6px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SN-88 &mdash; [HP] Homepage v1</h1>
+  <div class="meta">
+    Homepage composite &middot; Module <code>HP</code> &middot; Environment <code>qa</code> &middot; Run <code>2026-06-06</code> &middot; Home route <code>/</code> &middot; <strong>Executed pass rate 83% (10/12 executed)</strong>
+  </div>
+</header>
+
+<main>
+
+  <div class="lead">
+    <strong>What this is.</strong> First QA run of the Homepage v1 role-adaptive dashboard composite &mdash; the post-login landing surface that assembles hero, week strip, leave balances, recent activity, AI insight, and a "Needs your attention" zone from a single <code>/api/my-day</code> fetch. Binding matrix: <code>Homepage_v1_TestCases.md</code> (182 TCs, Mixed execution). The matrix is predominantly a <strong>dev-CI catalog</strong> (Layer U/C/I/V/A, owners FE/BE); only <strong>~40 rows are deployed-app observable</strong>, the rest verify by code inspection or need seeded composite state. <strong>Headline:</strong> Homepage is shipped and rendering; 10 of 12 graded TCs PASS, with <strong>3 real defects found</strong> &mdash; 1 P1 hard-lock violation + 2 P2 deep-link/spec-drift. ~170 TCs are BLOCKED on environment enablers (seeding, role creds, second entity, dev-build state gallery, static audits).
+  </div>
+
+  <div class="lead warn">
+    <strong>Surprise &mdash; wrong entry point on first probe.</strong> The Homepage is <strong>deployed and rendering at <code>/</code> (reached via the Home nav item)</strong>. An initial probe to the direct URL <code>/dashboard</code> showed an empty <code>&lt;main&gt;</code> and was a <strong>wrong entry point</strong> &mdash; the correct route is <code>/</code> (root). On cold mount the composite fires <code>GET /api/my-day</code> <strong>exactly once (HTTP 200)</strong> against the BFF, confirming the single-fetch lifecycle. Anyone re-running this module must enter via the Home nav, not <code>/dashboard</code>.
+  </div>
+
+  <div class="lead info">
+    <strong>Spec-ref naming drift (caps the matrix).</strong> The live app emits <code>data-spec-ref</code> values under a <code>HOME-7.*</code> prefix (e.g. <code>HOME-6.2</code> hero, <code>HOME-7.4</code> week, <code>HOME-7.5</code> leave, <code>HOME-7.7</code> activity), <strong>not</strong> the <code>HP-2.*</code> prefix the spec/matrix assert. This single drift caps selector-based matching for TC-022, TC-032, TC-074, TC-076, TC-077 and others &mdash; they cannot be verified against the deployed DOM until spec and DOM reconcile. Resolve before a fuller re-run.
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- AT A GLANCE                                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">At a glance <span class="sub">&mdash; run 2026-06-06 22:00 &middot; 12 graded, ~170 blocked of 182</span></div>
+  <div class="stat-tiles">
+    <div class="stat-tile"><div class="label">Total TCs</div><div class="value">182</div><div class="note">mostly dev-CI catalog; ~40 app-observable</div></div>
+    <div class="stat-tile pass"><div class="label">Pass</div><div class="value">10</div><div class="note">TC-003, 010, 019, 028, 032, 069, 152, 173, 174, 175</div></div>
+    <div class="stat-tile fail"><div class="label">Fail</div><div class="value">2</div><div class="note">TC-022, TC-071 (+ TC-075 hard-lock)</div></div>
+    <div class="stat-tile partial"><div class="label">Partial</div><div class="value">0</div><div class="note">&mdash;</div></div>
+    <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">~170</div><div class="note">seeding / creds / 2nd entity / static audits</div></div>
+    <div class="stat-tile skipped"><div class="label">Skipped</div><div class="value">0</div><div class="note">&mdash;</div></div>
+    <div class="stat-tile"><div class="label">Executed</div><div class="value">12</div><div class="note">deployed-app observable this run</div></div>
+    <div class="stat-tile fail"><div class="label">Distinct Defects</div><div class="value">3</div><div class="note">1 P1 + 2 P2 &middot; all filed in Jira</div></div>
+    <div class="stat-tile pass"><div class="label">Pass Rate</div><div class="value" style="font-size:20px;">83%</div><div class="note">10 / 12 graded (Pass+Fail)</div></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DEFECTS                                                          -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">Tier 1 &mdash; Real defects (filed) <span class="sub">&mdash; 3 bugs, 1 P1 hard-lock + 2 P2, all in Jira</span></div>
+  <div class="tier t1">
+    <h3>&#9888; Real bugs confirmed on the deployed app <span class="hint">3 defects &middot; SNOPS-174/175/176</span></h3>
+    <table>
+      <thead><tr><th>Key</th><th>Sev</th><th>Jira</th><th>Title</th><th>TC</th><th>What breaks &amp; why it matters</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="key">SN-88-FE003</td>
+          <td><span class="sev p1">P1</span></td>
+          <td><span class="jira">SNOPS-174</span></td>
+          <td class="sum"><strong>"File leave" opens inline dialog on Homepage</strong></td>
+          <td class="tc">TC-075</td>
+          <td class="sum">Clicking "+ File leave" in the leave-balances section opens an inline "File a request" dialog instead of navigating to the canonical Leave Application route (<code>/leave/new</code>).<span class="why">Spec hard-lock <code>[HP-1.0]</code> / AC-9.5.1 explicitly prohibits any leave form or modal rendered in Homepage v1. Dialog is beta/disabled but the inline pattern itself violates the hard-lock.</span></td>
+        </tr>
+        <tr>
+          <td class="key">SN-88-FE001</td>
+          <td><span class="sev p2">P2</span></td>
+          <td><span class="jira">SNOPS-175</span></td>
+          <td class="sum"><strong>Spec-ref / section-order drift</strong></td>
+          <td class="tc">TC-022</td>
+          <td class="sum">Live DOM uses <code>HOME-7.*</code> spec-refs (not <code>HP-2.*</code>); section order differs from spec (leave appears last, not 3rd); a <code>grid-stack</code> with a "Customize" button implies a user-rearrangeable layout.<span class="why">Conflicts with the spec's "locked Q4 vertical order" requirement and caps spec-ref-dependent matrix verification (TC-074, TC-076, TC-077, others).</span></td>
+        </tr>
+        <tr>
+          <td class="key">SN-88-FE002</td>
+          <td><span class="sev p2">P2</span></td>
+          <td><span class="jira">SNOPS-176</span></td>
+          <td class="sum"><strong>Week-strip "View full history" no-op</strong></td>
+          <td class="tc">TC-071</td>
+          <td class="sum">Clicking "View full history &rarr;" in the week strip does not navigate; URL stays at <code>/</code>.<span class="why">Spec requires deep-link to <code>/my-attendance</code>. Button renders and is clickable but produces no navigation, and no "coming soon" tooltip is present.</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PASSING                                                          -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">Confirmed working <span class="sub">&mdash; 10 PASSes on the deployed Homepage</span></div>
+  <div class="tier tdone">
+    <h3>&check; Verified behavior <span class="hint">10 PASS TCs &middot; admin / Test TH Regional</span></h3>
+    <table>
+      <thead><tr><th>TC</th><th>Area</th><th>What's confirmed working</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">TC-003</td><td><strong>Role composition</strong></td><td>Admin role renders the employee composition of the homepage composite.</td></tr>
+        <tr><td class="tc">TC-010</td><td><strong>Composite fetch</strong></td><td>Cold mount fires <code>GET /api/my-day</code> exactly once (HTTP 200) &mdash; single-fetch lifecycle confirmed. <em>(smoke PASS)</em></td></tr>
+        <tr><td class="tc">TC-019</td><td><strong>Entity scoping</strong></td><td>Single-entity tenant renders the entity pill as non-interactive (no switcher affordance).</td></tr>
+        <tr><td class="tc">TC-028</td><td><strong>Hero greeting</strong></td><td>Greeting salutation matches the local time-of-day bucket (evening observed).</td></tr>
+        <tr><td class="tc">TC-032</td><td><strong>Hero contract</strong></td><td>Hero DOM contains no clock action buttons &mdash; only a "Customize" button, no clock-in/out/break CTAs.</td></tr>
+        <tr><td class="tc">TC-069</td><td><strong>Week strip</strong></td><td>Week strip renders exactly 7 cells in Mon&ndash;Sun order.</td></tr>
+        <tr><td class="tc">TC-152</td><td><strong>Accessibility</strong></td><td>Visible focus rings on all interactive elements (keyboard tab traversal).</td></tr>
+        <tr><td class="tc">TC-173</td><td><strong>Prod cleanliness</strong></td><td>Demo strip absent in production build (<code>HP-STUDIO.rolebar</code> not in DOM or source).</td></tr>
+        <tr><td class="tc">TC-174</td><td><strong>Prod cleanliness</strong></td><td>State gallery absent in production build (<code>HP-STATES.gallery</code> not in DOM or source).</td></tr>
+        <tr><td class="tc">TC-175</td><td><strong>Role composition</strong></td><td>Admin role renders the employee composition of the homepage (companion to TC-003).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SMOKE                                                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">Smoke candidates <span class="sub">&mdash; 1/8 PASS &middot; 2 FAIL &middot; 5 BLOCKED</span></div>
+  <div class="tier t2">
+    <h3>&#9888; Smoke suite result <span class="hint">only 1 of 8 currently executable to PASS</span></h3>
+    <table>
+      <thead><tr><th>Smoke TC</th><th>Name</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">TC-010</td><td>Cold-mount single composite fetch</td><td><span class="st fixed">PASS</span></td><td>1x <code>GET /api/my-day</code>, HTTP 200</td></tr>
+        <tr><td class="tc">TC-022</td><td>Q4-locked section order</td><td><span class="st open">FAIL</span></td><td><code>HP-2.*</code> spec-refs absent; section order differs; Customize button implies rearrangeable layout</td></tr>
+        <tr><td class="tc">TC-075</td><td>"+ File leave" deep-link</td><td><span class="st open">FAIL</span></td><td>Opens inline dialog, not navigation to <code>/leave/new</code></td></tr>
+        <tr><td class="tc">TC-001</td><td>Employee role hides For Decision</td><td><span class="st blocked">BLOCKED</span></td><td>Role cred mismatch</td></tr>
+        <tr><td class="tc">TC-002</td><td>Manager role renders For Decision</td><td><span class="st blocked">BLOCKED</span></td><td>Role cred mismatch + PENDING_QUEUE seeding</td></tr>
+        <tr><td class="tc">TC-046</td><td>"View all approvals" deep-link</td><td><span class="st blocked">BLOCKED</span></td><td>Role cred mismatch</td></tr>
+        <tr><td class="tc">TC-053</td><td>Anomaly card visible</td><td><span class="st blocked">BLOCKED</span></td><td>Requires ANOMALY_NOTIF seeding</td></tr>
+        <tr><td class="tc">TC-082</td><td>FYI cap-3 render</td><td><span class="st blocked">BLOCKED</span></td><td>Requires FYI_NOTIF seeding</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- BLOCKED BUCKETS                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">Tier 2 &mdash; Blockers by reason bucket <span class="sub">&mdash; ~170 TCs awaiting environment enablers</span></div>
+  <div class="tier tblock">
+    <h3>&#128274; Blocked TCs &mdash; what's needed to unblock <span class="hint">13 buckets &middot; ~170 TCs</span></h3>
+    <table>
+      <thead><tr><th>Reason bucket</th><th>Count</th><th>Representative TCs</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Requires PENDING_QUEUE seeding</strong> (approval envelopes)</td><td class="tc">~18</td><td class="tc">TC-002, TC-006, TC-035&ndash;045, TC-047&ndash;050, TC-163&ndash;164, TC-167, TC-185</td></tr>
+        <tr><td><strong>Requires ANOMALY_NOTIF seeding</strong></td><td class="tc">~18</td><td class="tc">TC-007, TC-013, TC-053&ndash;064, TC-090, TC-177, TC-183</td></tr>
+        <tr><td><strong>Requires FYI_NOTIF seeding</strong></td><td class="tc">~8</td><td class="tc">TC-052, TC-082&ndash;090, TC-169</td></tr>
+        <tr><td><strong>Requires LEAVE_BALANCES seeding</strong></td><td class="tc">~5</td><td class="tc">TC-021, TC-074, TC-078&ndash;081</td></tr>
+        <tr><td><strong>Requires dev-build state gallery</strong></td><td class="tc">~12</td><td class="tc">TC-129&ndash;139, TC-142</td></tr>
+        <tr><td><strong>Requires clock mock / time advance</strong></td><td class="tc">~4</td><td class="tc">TC-014, TC-015, TC-027, TC-165</td></tr>
+        <tr><td><strong>Requires backend batch trigger</strong></td><td class="tc">~8</td><td class="tc">TC-063, TC-087, TC-089, TC-103&ndash;107, TC-112, TC-168</td></tr>
+        <tr><td><strong>Static / source audit</strong> (not deployable)</td><td class="tc">~30</td><td class="tc">TC-008, TC-023&ndash;026, TC-034, TC-050, TC-067&ndash;068, TC-076, TC-083&ndash;084, TC-091, TC-094&ndash;102, TC-108&ndash;121, TC-123, TC-127, TC-139&ndash;148</td></tr>
+        <tr><td><strong>Role cred mismatch</strong> (gelosprout2/3 = admin)</td><td class="tc">~6</td><td class="tc">TC-001, TC-002, TC-046, &sect;A role-gated, manager queue TCs</td></tr>
+        <tr><td><strong>Requires NOPERM_USER</strong> (not provisioned)</td><td class="tc">~5</td><td class="tc">TC-004&ndash;007, TC-009, TC-156&ndash;158</td></tr>
+        <tr><td><strong>Requires NONTH_ENTITY</strong> (non-Thai entity type)</td><td class="tc">~5</td><td class="tc">TC-122, TC-153&ndash;155, TC-183</td></tr>
+        <tr><td><strong>Requires ENTITY_A / ENTITY_B</strong> (second entity)</td><td class="tc">~5</td><td class="tc">TC-012, TC-013, TC-018, TC-166, TC-183</td></tr>
+        <tr><td><strong>Stub element absent</strong> (My leave history)</td><td class="tc">2</td><td class="tc">TC-077, TC-176</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- RECOMMENDATIONS                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">Recommended next actions <span class="sub">&mdash; in priority order</span></div>
+  <div class="actions">
+    <ol>
+      <li><span class="dot r"></span><strong>Fix the file-leave hard-lock (P1, SNOPS-174).</strong> The inline "File a request" dialog on the Homepage violates <code>[HP-1.0]</code> / AC-9.5.1 ("no leave form rendered in Homepage v1"). Replace the inline modal with navigation to the canonical Leave Application route (<code>/leave/new</code>), or get an explicit product waiver for the beta pattern.</li>
+      <li><span class="dot y"></span><strong>Resolve the <code>HP-2.*</code> vs <code>HOME-7.*</code> spec-ref drift (P2, SNOPS-175) before a fuller re-run.</strong> The naming mismatch caps matrix selector matching for a swath of spec-ref-bound TCs (TC-022, TC-074, TC-076, TC-077, others). Dev to confirm whether <code>HOME-7.*</code> is final and update the spec/matrix, or align the DOM to <code>HP-2.*</code>. Also reconcile the locked-Q4-order vs Customize/grid-stack rearrangeable-layout conflict.</li>
+      <li><span class="dot y"></span><strong>Wire the week-strip history link (P2, SNOPS-176).</strong> "View full history &rarr;" must deep-link to <code>/my-attendance</code> (or carry a coming-soon tooltip if intentionally deferred).</li>
+      <li><span class="dot g"></span><strong>Stand up environment enablers to unblock the matrix.</strong> Notification / queue / leave-balance seeding (PENDING_QUEUE, ANOMALY_NOTIF, FYI_NOTIF, LEAVE_BALANCES) unblocks <strong>~50 TCs</strong>; real employee/manager + permission-stripped accounts (NOPERM_USER) unblocks <strong>~11 TCs</strong>; a second entity plus a non-Thai entity (ENTITY_A/B, NONTH_ENTITY) unblocks <strong>~10 TCs</strong>.</li>
+      <li><span class="dot g"></span><strong>Leave the ~30 static/source audits in dev-CI.</strong> RBAC-map greps, wireframe <code>data-spec-ref</code>/emoji/em-dash scans, and source-pattern hard-locks verify by code inspection &mdash; not browser-executable against the deployed app; they stay in the dev-CI catalog.</li>
+    </ol>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ARTIFACTS                                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label">Source artifacts</div>
+  <div class="actions" style="font-size:13px;color:var(--ink-2)">
+    <ul style="margin:6px 0 0 0;padding-left:20px;line-height:1.8">
+      <li><strong>Binding matrix:</strong> <code>docs/features/SN-88/Homepage_v1_TestCases.md</code> (182-row companion, v1 2026-05-28)</li>
+      <li><strong>Spec:</strong> <code>docs/features/SN-88/Homepage_v1_Spec.md</code> (v1.0, Thailand Beta, 2026-05-28)</li>
+      <li><strong>Local TCs:</strong> <code>docs/qa/test-cases/SN-88/test-cases.md</code> (182 TCs, Mixed execution; mirrors binding matrix)</li>
+      <li><strong>Run results:</strong> <code>docs/qa/test-cases/SN-88/results/2026-06-06_22-00.md</code> &mdash; 10P / 2F / ~170B</li>
+      <li><strong>Screenshots:</strong> <code>docs/qa/test-cases/SN-88/results/screenshots/</code> (10 files; e.g. <code>tc-010-network-my-day.png</code>, <code>tc-075-fail-file-leave-dialog.png</code>, <code>tc-022-fail-spec-refs-wrong-prefix.png</code>)</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  Generated 2026-06-06 &middot; SN-88 [HP] Homepage v1 &middot; <code>docs/qa/test-cases/SN-88/results/SN-88_Execution_Report_standalone.html</code>
+</footer>
+
+</body>
+</html>
