@@ -74,6 +74,70 @@ footer{max-width:1200px;margin:0 auto;padding:16px;color:var(--ink-dim);font-siz
 <main>
 
 <!-- =================================================================
+     2026-06-08 CASCADE RERUN
+     Scope: SNOPS-101 defect-verified-fixed TCs only (1 TC)
+     Admin: richardtest / Richard Losande | Entity: QA Testing
+     Baseline: 2026-06-06 full regression (38 pass / 1 fail / 1 partial / 4 blocked)
+     ================================================================= -->
+<section class="card" id="cascade-rerun-2026-06-08" style="border-left:4px solid #2563eb">
+  <h2 style="display:flex;align-items:center;gap:10px">
+    <span style="background:#2563eb;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:6px;letter-spacing:.04em">CASCADE RERUN</span>
+    2026-06-08 Cascade Rerun
+  </h2>
+  <p style="font-size:13px;color:var(--ink-dim);margin:0 0 14px">
+    <strong>Date:</strong> 2026-06-08 &middot;
+    <strong>Scope:</strong> Defect-verified-fixed TCs only (SNOPS-101) &middot;
+    <strong>Admin:</strong> richardtest / Richard Losande &middot;
+    <strong>Entity:</strong> QA Testing &middot;
+    <strong>Env:</strong> qa &middot;
+    <strong>Baseline:</strong> 2026-06-06 full regression &mdash; 38 pass / 1 fail / 1 partial / 4 blocked
+  </p>
+
+  <!-- Counts (scoped: 1 TC re-executed) -->
+  <div class="summary-grid" style="margin-bottom:18px">
+    <div class="stat-tile pass"><div class="label">PASS</div><div class="value">1</div></div>
+    <div class="stat-tile fail"><div class="label">FAIL</div><div class="value">0</div></div>
+    <div class="stat-tile"><div class="label">Scope</div><div class="value" style="font-size:20px">1 TC</div></div>
+    <div class="stat-tile pass"><div class="label">Pass rate</div><div class="value" style="font-size:20px">100%</div></div>
+  </div>
+
+  <!-- Delta vs 2026-06-06 -->
+  <h3 style="font-size:15px;margin:0 0 8px">Delta vs 2026-06-06</h3>
+  <table style="margin-bottom:18px">
+    <thead><tr><th>Metric</th><th>2026-06-06</th><th>2026-06-08</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td>PASS</td><td>38</td><td><strong>39</strong></td><td style="color:var(--pass)">+1</td></tr>
+      <tr><td>FAIL</td><td>1</td><td><strong>0</strong></td><td style="color:var(--pass)">&minus;1</td></tr>
+      <tr><td>PARTIAL</td><td>1</td><td><strong>1</strong></td><td>&plusmn;0</td></tr>
+      <tr><td>BLOCKED</td><td>4</td><td><strong>4</strong></td><td>&plusmn;0</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Fix confirmed -->
+  <h3 style="font-size:15px;margin:0 0 8px">Fix Confirmed (FAIL &rarr; PASS)</h3>
+  <div class="defect-list" style="margin-bottom:18px">
+    <article class="defect" style="background:#f0fdf4;border-left-color:var(--pass)">
+      <div class="defect-head">
+        <span class="pri" style="background:var(--pass)">FIX</span>
+        <code class="defect-key">SNOPS-101</code>
+        <h3 style="margin:4px 0 0">Group admin picker &mdash; shows employee suggestions on focus (Create wizard Step 1)</h3>
+      </div>
+      <p>
+        Previously <strong>FAIL</strong> (2026-06-06): picker required explicit typing to surface results.
+        Current behavior: suggestions list populates immediately on focus/dialog render &mdash; no typing required.
+        Confirmed via <code>searchbox "Group admin"</code> rendering a populated <code>list</code> with
+        <code>listitem</code> entries on dialog open. Cascade confirmed. No group was created (wizard cancelled via Escape).
+      </p>
+      <p class="affected">Evidence: <code>CASCADE-0608-sn18-group-admin-picker-suggestions.png</code></p>
+    </article>
+  </div>
+
+  <!-- New defects -->
+  <h3 style="font-size:15px;margin:0 0 8px">New Defects</h3>
+  <p style="font-size:14px;color:var(--pass);margin:0 0 18px"><strong>NONE</strong> &mdash; no new defects filed this rerun.</p>
+</section>
+
+<!-- =================================================================
      2026-06-06 FULL REGRESSION RUN
      Admin: richardtest / Richard Losande | Entity: Test TH Regional
      Baseline: 2026-06-05_regression.md (johnangelol) — 30/2/1/6

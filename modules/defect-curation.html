@@ -92,7 +92,7 @@
 <header>
   <h1>SproutNext — Defect Curation</h1>
   <div class="meta">
-    Employee-journey focus &middot; Environment: <code>qa</code> &middot; entity <code>QA Testing</code> &middot; Curated 2026-06-01 &middot; <strong>Refreshed 2026-06-06 — RBAC-wiring full regression; new RBAC leaks (NEW-BE-H3, NEW-0606-01, Gender-to-Manager); reconciled to _snapshot.json</strong>
+    Employee-journey focus &middot; Environment: <code>qa</code> &middot; entity <code>QA Testing</code> &middot; Curated 2026-06-01 &middot; <strong>Refreshed 2026-06-08 — reconciled to live SNOPS Jira (140 total / 68 open / 72 Done); 19 retest-verified moved to Done, SNOPS-38 re-opened</strong>
   </div>
 </header>
 
@@ -126,19 +126,21 @@
     <strong>05 Jun — SN-62 (Clock In/Out chip) synced.</strong> Functional core works (chip deployed; admin can clock in/out). <strong>5 FE defects</strong> added to this curation under the <em>Manage</em> stage (daily attendance): <code>SN-62-FE-NEW-001</code> P1 i18n Hard Lock (TC-083), <code>SN-62-FE-NEW-002</code> P2 dismiss-on-outside-click / <code>module:dismissPopovers</code> (TC-009), and three P3 polish items (<code>-003</code> animation TC-081, <code>-004</code> hover elevation TC-080, <code>-005</code> role-badge spec-ref TC-090). <em>Environment caveat (NOT a defect):</em> SN-62's remaining TCs are blocked because <code>gelosprout2</code>/<code>gelosprout3</code> carry the admin role (not employee/manager) &rarr; HTTP 403 on Clock In (missing <code>attendance.own.clock</code> scope). Reprovision roles to unblock the active/done-state TCs.
   </div>
 
-  <div class="section-label">At a glance <span class="sub">— reconciled to _snapshot.json (2026-06-06) &middot; 114 total / 53 open / 61 Done across all 13 modules</span></div>
+  <div class="section-label">At a glance <span class="sub">— reconciled to live SNOPS Jira (2026-06-08) &middot; 140 total / 68 open / 72 Done across all 13 modules</span></div>
+  <div class="lead" style="border-left-color:var(--pass);background:#f0fdf4;margin:0 0 10px">
+    <strong>Recently verified fixed (2026-06-08).</strong> The 2026-06-08 cascade rerun confirmed <strong style="color:var(--pass)">19 defects fixed → moved to Done</strong> — SN-66 (SNOPS-91/124/125), SN-2 (SNOPS-121/122), SN-18 (SNOPS-101), SN-62 (SNOPS-126), SN-22 (SNOPS-103/142), SN-54 (SNOPS-131/141) and related. <strong style="color:var(--p1)">SNOPS-38 (SN-26-FE001, silent-400) was RE-OPENED to In&nbsp;Progress</strong> — the fix did not land in QA; all four structural-rejection TCs still silent-reset. Net effect on the closed count is <strong>+11 Done</strong> (19 newly Done minus 8 offset by re-opens/newly-filed bugs since the 06-06 snapshot).
+  </div>
   <div class="lead" style="border-left-color:var(--p1);background:#fff;margin:0 0 14px">
-    <strong>53 open defects across all modules (+10 vs 2026-06-05 — 7 SN-54 + 3 SN-88 filed)</strong> &mdash; curated on the journey below. The per-stage and tier tables list a
-    deliberate <em>subset</em> (the journey-critical and recently-changed items); they are not the full inventory.
-    The full counts trace to <code>_snapshot.json</code> (111 distinct &middot; 61 Done &middot; 50 open). The 2026-06-06 RBAC-wiring run added <strong>9 new defects</strong> (NEW-BE-H3, NEW-0606-01, Gender-to-Manager + 2 SN-22, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and <strong>verified 4 fixed</strong> (SN-70 FE-M3/FE-M5, SN-2 SN2-FE004/FE005).
+    <strong>68 open defects across all modules (+15 vs 2026-06-06)</strong> &mdash; the per-stage and tier tables below curate a
+    deliberate <em>subset</em> (journey-critical and recently-changed items), not the full inventory. Counts are now the <strong>live SNOPS Jira truth</strong>: <code>status=Done</code> = 72, <code>status in (In Progress, Backlog, For Review)</code> = 68, total Bug = 140 (72+68). The curated P1/P2/P3 breakdown below sums to the journey-tracked subset; the remainder are filed-but-uncurated backlog items.
   </div>
   <div class="kpis">
-    <div class="kpi"><div class="l">Total defects</div><div class="v">114 <span style="font-size:15px;color:var(--ink-dim)">(+10)</span></div><div class="n">_snapshot.json &middot; 61 Done + 53 open</div></div>
-    <div class="kpi"><div class="l">Open defects</div><div class="v">53 <span style="font-size:15px;color:var(--ink-dim)">(+10)</span></div><div class="n">P1 16 + P2 26 + P3 11 = 53</div></div>
-    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">16 <span style="font-size:15px;color:var(--ink-dim)">(+3)</span></div><div class="n">+SN-88 FE003 (leave hard-lock, SNOPS-174) · SN-54 BE001 (cross-entity write), FE001 (publish broken) — both filed SNOPS-167/168</div></div>
-    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">26 <span style="font-size:15px;color:var(--ink-dim)">(+7)</span></div><div class="n">+SN-88 FE001/FE002 (SNOPS-175/176) · SN-54 FE002/BE002/FE003/FE004/FE005 (SNOPS-169–173)</div></div>
-    <div class="kpi p3"><div class="l">P3 / Med — open</div><div class="v">11</div><div class="n">SN-54 P3/P4 (14) documented, not filed</div></div>
-    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">61</div><div class="n">_snapshot.json defectsClosed</div></div>
+    <div class="kpi"><div class="l">Total defects</div><div class="v">140 <span style="font-size:15px;color:var(--ink-dim)">(+26)</span></div><div class="n">live SNOPS Jira &middot; 72 Done + 68 open</div></div>
+    <div class="kpi"><div class="l">Open defects</div><div class="v">68 <span style="font-size:15px;color:var(--ink-dim)">(+15)</span></div><div class="n">P1 15 + P2 26 + P3 11 + 16 uncurated = 68</div></div>
+    <div class="kpi p1"><div class="l">P1 (critical) — open</div><div class="v">15 <span style="font-size:15px;color:var(--ink-dim)">(-1)</span></div><div class="n">curated journey P1s; SNOPS-38 re-opened (back to open), offset by SN-54/SN-66 P1 retests verified fixed</div></div>
+    <div class="kpi p2"><div class="l">P2 (high) — open</div><div class="v">26 <span style="font-size:15px;color:var(--ink-dim)">(+0)</span></div><div class="n">curated journey P2 subset</div></div>
+    <div class="kpi p3"><div class="l">P3 / Med — open</div><div class="v">11 <span style="font-size:15px;color:var(--ink-dim)">(+0)</span></div><div class="n">SN-54 P3/P4 documented, not filed</div></div>
+    <div class="kpi"><div class="l">Done</div><div class="v" style="color:var(--pass)">72 <span style="font-size:15px;color:var(--ink-dim)">(+11)</span></div><div class="n">live SNOPS Jira &middot; status=Done</div></div>
   </div>
 
   <div class="section-label">Where it hurts on the journey <span class="sub">— open defect count &middot; P1 count per stage &middot; post-retest</span></div>
@@ -370,8 +372,8 @@
   </div>
 
   <footer>
-    Reconciled to <code>docs/qa/curation/_snapshot.json</code> (2026-06-06: 104 distinct / 43 open / 61 Done).
-    Sourced from the per-module <code>docs/qa/test-cases/&lt;SN&gt;/results/2026-06-06_fullreg.md</code> files (RBAC-wiring full regression).
+    Reconciled to live SNOPS Jira (2026-06-08: 140 distinct / 68 open / 72 Done). Prior snapshot 2026-06-06: 114 distinct / 53 open / 61 Done.
+    Sourced from the per-module <code>docs/qa/test-cases/&lt;SN&gt;/results/2026-06-08_cascade-rerun.md</code> files (cascade rerun of fixed-defect TCs).
     New 06 Jun RBAC leaks (NEW-BE-H3, NEW-0606-01, SN-22 TC-031/081/044, SN-10 FE012/FE013, SN-2 RBAC-HOL-001, SN-26 TC-044) and the SN-70 FE/BE-H defects remain unfiled.
     Severities use the SNOPS P1&ndash;P4 scheme.
   </footer>

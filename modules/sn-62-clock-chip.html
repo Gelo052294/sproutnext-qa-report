@@ -115,7 +115,7 @@
 <header>
   <h1>SN-62 &mdash; [CC] Clock In/Out Chip</h1>
   <div class="meta">
-    App Shell punch surface &middot; Module <code>CC</code> &middot; Environment <code>qa</code> &middot; Runs: <code>2026-06-04</code> + <code>2026-06-05</code> + <code>2026-06-06</code> &middot; <strong>Latest: 42 PASS / 7 FAIL / 2 PARTIAL &mdash; clock-in 403 fix unblocked</strong>
+    App Shell punch surface &middot; Module <code>CC</code> &middot; Environment <code>qa</code> &middot; Runs: <code>2026-06-04</code> + <code>2026-06-05</code> + <code>2026-06-06</code> + <code>2026-06-08</code> &middot; <strong>Latest: PASS +6 &middot; BLOCKED &minus;6 &mdash; SNOPS-126 cascade confirmed fixed</strong>
   </div>
 </header>
 
@@ -308,6 +308,123 @@
   <hr style="border:none;border-top:1px solid var(--line);margin:32px 0 8px" />
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- END RUN 3                                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- RUN 4 — 2026-06-08 CASCADE RERUN                               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:36px">2026-06-08 Cascade Rerun <span class="sub">&mdash; Run 4 &middot; SNOPS-126 fix confirmed &middot; 7 TCs &middot; 100% pass</span></div>
+
+  <div class="lead good">
+    <strong>SNOPS-126 (homepage clock-in) confirmed fixed.</strong>
+    Full pending&rarr;active&rarr;done cycle executed successfully. 6 previously-BLOCKED TCs move to <strong>PASS</strong>.
+    TC-016 (canonical write payload) reconfirmed PASS.
+    <strong>No new defects.</strong> Delta vs 2026-06-06: <strong>PASS +6 &middot; BLOCKED &minus;6</strong>.
+  </div>
+
+  <div class="stat-tiles" style="margin-top:14px">
+    <div class="stat-tile pass">
+      <div class="label">Pass</div>
+      <div class="value">7</div>
+      <div class="note">7 / 7 in-scope &middot; 100%</div>
+    </div>
+    <div class="stat-tile fail">
+      <div class="label">Fail</div>
+      <div class="value">0</div>
+      <div class="note">&mdash;</div>
+    </div>
+    <div class="stat-tile blocked">
+      <div class="label">Blocked</div>
+      <div class="value">0</div>
+      <div class="note">&minus;6 vs 2026-06-06</div>
+    </div>
+    <div class="stat-tile pass">
+      <div class="label">Delta PASS</div>
+      <div class="value" style="color:var(--pass)">+6</div>
+      <div class="note">TC-019,020,021,031,034,035</div>
+    </div>
+    <div class="stat-tile">
+      <div class="label">Open Defects</div>
+      <div class="value">0</div>
+      <div class="note">No new defects this run</div>
+    </div>
+    <div class="stat-tile pass">
+      <div class="label">Defect retested</div>
+      <div class="value" style="font-size:16px;">SNOPS-126</div>
+      <div class="note">Marked Done &rarr; confirmed fixed</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">SNOPS-126 cascade &mdash; BLOCKED &rarr; PASS <span class="sub">&mdash; full pending&rarr;active&rarr;done cycle verified</span></div>
+  <div class="tier tdone">
+    <h3>&check; Cascade TCs: BLOCKED &rarr; PASS <span class="hint">SNOPS-126 fix &middot; 2026-06-08</span></h3>
+    <table>
+      <thead><tr><th>TC</th><th>Name</th><th>Prior (2026-06-06)</th><th>This Run</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc">TC-019</td>
+          <td>Chip color amber to green on Clock In</td>
+          <td><span class="st blocked">BLOCKED</span></td>
+          <td><span class="st fixed">PASS</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">Chip transitions to active tokens (bg-success-subtle, border-success, text-success). <code>data-state="active"</code>.</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-020</td>
+          <td>Chip label flips to "0h 00m" on Clock In</td>
+          <td><span class="st blocked">BLOCKED</span></td>
+          <td><span class="st fixed">PASS</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">Label shows "0h 00m" immediately after Clock In. <code>data-state="active"</code> confirmed.</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-021</td>
+          <td>Location selector hides; location row appears in details</td>
+          <td><span class="st blocked">BLOCKED</span></td>
+          <td><span class="st fixed">PASS</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">Location selector absent post-Clock In. "Location: Remote" row present in details zone.</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-031</td>
+          <td>Chip transitions active to done (terminal)</td>
+          <td><span class="st blocked">BLOCKED</span></td>
+          <td><span class="st fixed">PASS</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">After Clock Out: <code>data-state="done"</code>, text="0h 01m". Panel shows "Clocked out for today". Clock Out POST confirmed.</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-034</td>
+          <td>Primary button hidden in done state</td>
+          <td><span class="st blocked">BLOCKED</span></td>
+          <td><span class="st fixed">PASS</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">Done panel: buttons array is empty. No Clock In or Clock Out button in DOM.</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-035</td>
+          <td>Done-state details zone shows full session</td>
+          <td><span class="st blocked">BLOCKED</span></td>
+          <td><span class="st fixed">PASS</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">Done panel shows all 5 rows: Clock in (13:37), Clock out (13:38), Schedule (09:00&ndash;18:00), Location (Remote), Break taken (0 min).</td>
+        </tr>
+        <tr>
+          <td class="tc">TC-016</td>
+          <td>Clock In emits canonical write payload</td>
+          <td><span class="st fixed">PASS (prior)</span></td>
+          <td><span class="st fixed">PASS (reconfirmed)</span></td>
+          <td style="font-size:12px;color:var(--ink-dim)">POST to <code>/core/api/v1/clock-events</code> intercepted: <code>{clientEventId, entityId, eventType: "ClockIn", timestamp (ISO UTC), source: "Web", locationCode: "remote"}</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label" style="margin-top:4px">Run 4 test data &amp; account state <span class="sub">&mdash; 2026-06-08 13:36&ndash;13:45 Asia/Bangkok</span></div>
+  <div class="actions" style="font-size:13px;color:var(--ink-2)">
+    <ul style="margin:6px 0 0 0;padding-left:20px;line-height:2">
+      <li><strong>Cycle account (pending&rarr;active&rarr;done):</strong> gelosprout2@gmail.com (Gelo Manager2) &middot; Test TH Regional &middot; clocked in 13:37, out 13:38 &rarr; DONE &mdash; <em>next day auto-resets to pending</em></li>
+      <li><strong>Done-state evidence account:</strong> gelosprout3@gmail.com (Gelo Employee3) &middot; already DONE (10:54/10:55 prior activity) &mdash; single-session enforcement prevented second clock-in; done-state panel used as evidence for TC-031, TC-034, TC-035</li>
+    </ul>
+  </div>
+
+  <hr style="border:none;border-top:1px solid var(--line);margin:32px 0 8px" />
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- END RUN 4                                                       -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
 
   <div class="section-label">At a glance <span class="sub">&mdash; de-duplicated across both runs &middot; final status per TC (Runs 1&ndash;2)</span></div>
@@ -556,6 +673,7 @@
       <li><strong>Run 1 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-04_15-17.md</code> &mdash; 18P / 4F / 54B / 16S</li>
       <li><strong>Run 2 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-05_09-22.md</code> &mdash; 22P / 7F / 18B</li>
       <li><strong>Run 3 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-06_fullreg.md</code> &mdash; 42P / 7F / 2 PARTIAL / 0 BLOCKED (clock-in 403 fix)</li>
+      <li><strong>Run 4 results:</strong> <code>docs/qa/test-cases/SN-62/results/2026-06-08_cascade-rerun.md</code> &mdash; 7P / 0F / 0 BLOCKED &middot; SNOPS-126 cascade &middot; PASS +6 vs baseline</li>
       <li><strong>Markdown consolidated:</strong> <code>docs/qa/runs/2026-06-05_sn-62-clock-chip.md</code></li>
       <li><strong>Screenshots:</strong> <code>docs/qa/test-cases/SN-62/results/screenshots/</code> (14 files across both runs)</li>
     </ul>
@@ -564,7 +682,7 @@
 </main>
 
 <footer>
-  Generated 2026-06-05 &middot; Updated 2026-06-06 (Run 3 — 403 fix) &middot; SN-62 [CC] Clock In/Out Chip &middot; <code>docs/qa/test-cases/SN-62/results/SN-62_Execution_Report_standalone.html</code>
+  Generated 2026-06-05 &middot; Updated 2026-06-06 (Run 3 &mdash; 403 fix) &middot; Updated 2026-06-08 (Run 4 &mdash; SNOPS-126 cascade) &middot; SN-62 [CC] Clock In/Out Chip &middot; <code>docs/qa/test-cases/SN-62/results/SN-62_Execution_Report_standalone.html</code>
 </footer>
 
 </body>

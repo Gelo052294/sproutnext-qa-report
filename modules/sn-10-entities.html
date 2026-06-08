@@ -88,7 +88,7 @@
   <div class="meta">
     Tester: <code>Richard Losande</code> (Admin) + <code>johnangelol</code> (Entity Admin) &middot;
     Environment: qa &middot;
-    Run: 2026-05-30 06:07 &middot; <strong style="color:#fde68a">Retest: 2026-06-01</strong> &middot; <strong style="color:#fde68a">Regression: 2026-06-05</strong> &middot; <strong style="color:#fde68a">Full Regression: 2026-06-06</strong> &middot; Spec: Entities_Spec.md v1.2 &middot; PW_TERMINAL=1
+    Run: 2026-05-30 06:07 &middot; <strong style="color:#fde68a">Retest: 2026-06-01</strong> &middot; <strong style="color:#fde68a">Regression: 2026-06-05</strong> &middot; <strong style="color:#fde68a">Full Regression: 2026-06-06</strong> &middot; <strong style="color:#fde68a">Cascade Rerun: 2026-06-08</strong> &middot; Spec: Entities_Spec.md v1.2 &middot; PW_TERMINAL=1
   </div>
   <div class="meta" style="margin-top:8px;padding:8px 12px;background:rgba(22,163,74,0.18);border-radius:6px;">
     <strong>Retest 2026-06-01:</strong> CREATE regression FIXED (SNOPS-61) &middot; silent-error swallow FIXED (SNOPS-62) &middot;
@@ -108,6 +108,13 @@
     TC-017/033 discard dialogs FIXED &middot; TC-021/022 UNBLOCKED (richardtest write access) &middot; TC-029 VAT field FIXED (blur validation outstanding) &middot;
     2 NEW P1 defects: SN-10-FE012 (Name field blocks creation) + SN-10-FE013 (Entity Admin cross-entity scoping anomaly; corroborates SN-70 NEW-BE-H3) &middot;
     No regressions vs 2026-06-05. See <code>2026-06-06_fullreg.md</code>.
+  </div>
+  <div class="meta" style="margin-top:8px;padding:8px 12px;background:rgba(22,163,74,0.15);border-radius:6px;border:1px solid rgba(22,163,74,0.30);">
+    <strong>Cascade Rerun 2026-06-08 (richardtest / fixed-defect verification):</strong>
+    4 TCs scoped &middot; PASS &plusmn;0 &middot; FAIL &plusmn;0 &middot; PARTIAL &plusmn;0 &middot; No net count change &middot;
+    TC-017 (SNOPS-118) + TC-033 (SNOPS-119) confirmed stable PASS &middot;
+    TC-005 (SNOPS-65) + TC-029 (SNOPS-117) remain PARTIAL (label/validation gaps persist) &middot;
+    Defects: no change. See <code>2026-06-08_cascade-rerun.md</code>.
   </div>
 </header>
 <main>
@@ -203,6 +210,35 @@
     <strong>Persisting PARTIALs (7):</strong> TC-002 (inactive kebab shows Edit) &middot; TC-005 (Details tab label + field gaps) &middot;
     TC-007 (no Default annotation on chips) &middot; TC-009 (missing Parent Company + Default Language + Run Groups) &middot;
     TC-011/016/028 (blur validation absent) &middot; TC-015 (Date Format + Default Language absent from edit) &middot; TC-029 (VAT field present, blur validation absent).
+  </p>
+</section>
+
+<section class="card" style="border-left:4px solid #16a34a;">
+  <h2>2026-06-08 Cascade Rerun</h2>
+  <div class="summary-grid" style="margin-bottom:14px;">
+    <div class="stat-tile pass"><div class="label">Pass</div><div class="value">2</div></div>
+    <div class="stat-tile fail"><div class="label">Fail</div><div class="value">0</div></div>
+    <div class="stat-tile partial"><div class="label">Partial</div><div class="value">2</div></div>
+    <div class="stat-tile blocked"><div class="label">Blocked</div><div class="value">0</div></div>
+    <div class="stat-tile skipped"><div class="label">Total Scoped</div><div class="value">4</div></div>
+    <div class="stat-tile pass"><div class="label">Net Change</div><div class="value" style="font-size:20px;">&plusmn;0</div></div>
+  </div>
+  <p class="summary-text">
+    <strong>Run:</strong> 2026-06-08 13:45 &middot; <strong>Tester:</strong> richardtest / Richard Losande (Admin, QA Testing) &middot;
+    <strong>Purpose:</strong> Fixed-defect verification for SNOPS-117, SNOPS-118, SNOPS-119, SNOPS-65 (all marked Done 2026-06-08) &middot;
+    <strong>Baseline:</strong> 2026-06-06_fullreg.md<br><br>
+
+    <strong>Delta vs 2026-06-06:</strong> PASS &plusmn;0 &middot; FAIL &plusmn;0 &middot; PARTIAL &plusmn;0. No net count change -- 4 TCs scoped, 2 already PASS (confirmed stable), 2 already PARTIAL (remain PARTIAL).<br><br>
+
+    <strong>Fixes confirmed stable (no regression):</strong><br>
+    &bull; <strong>TC-017</strong> (SNOPS-118 -- edit-cancel discard dialog) -- PASS &rarr; PASS. Dialog appears on Cancel with unsaved changes; Keep editing and Discard both work; Cancel with no changes exits cleanly. SNOPS-118 fix holds.<br>
+    &bull; <strong>TC-033</strong> (SNOPS-119 -- create discard guard) -- PASS &rarr; PASS. Navigate-away guard fires on browser back with unsaved data; Discard navigates cleanly. SNOPS-119 fix holds.<br><br>
+
+    <strong>Persisting PARTIALs (no change):</strong><br>
+    &bull; <strong>TC-005</strong> (SNOPS-65 -- Details tab fields) -- PARTIAL &rarr; PARTIAL. Section header still reads &ldquo;Entity Admin Information&rdquo; (spec: &ldquo;HR Contact Information&rdquo;); Default Language shows code &ldquo;th&rdquo; not &ldquo;Thai&rdquo;; Fiscal Year shows &ldquo;01-01&rdquo; not &ldquo;January&rdquo;. SNOPS-65 not yet resolved.<br>
+    &bull; <strong>TC-029</strong> (SNOPS-117 -- VAT blur validation) -- PARTIAL &rarr; PARTIAL. VAT Registration Number field is present in view and edit modes (SNOPS-117 fix confirmed). Blur validation absent for invalid input (5-digit VAT: no inline error) -- same systemic pattern across all Registration fields.<br><br>
+
+    <strong>Defects:</strong> No change. No new defects filed. No existing defects closed as a result of this run.
   </p>
 </section>
 
@@ -903,7 +939,7 @@
 
 </main>
 <div class="lightbox" id="lightbox"><img src="" alt="" /></div>
-<footer>Generated from <code>2026-05-30_06-07.md</code> + <code>2026-06-01_retest.md</code> + <code>2026-06-05_regression.md</code> + <code>2026-06-06_fullreg.md</code> &middot; standalone report (screenshots base64-embedded, no external assets).</footer>
+<footer>Generated from <code>2026-05-30_06-07.md</code> + <code>2026-06-01_retest.md</code> + <code>2026-06-05_regression.md</code> + <code>2026-06-06_fullreg.md</code> + <code>2026-06-08_cascade-rerun.md</code> &middot; standalone report (screenshots base64-embedded, no external assets).</footer>
 <script>
   const buttons = document.querySelectorAll('.filter-btn');
   const tcs = document.querySelectorAll('details.tc');

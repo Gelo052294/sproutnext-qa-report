@@ -1423,6 +1423,85 @@
   </p>
 </section>
 
+<!-- ============================================================
+     CASCADE RERUN — 2026-06-08
+     Source: docs/qa/test-cases/SN-66/results/2026-06-08_cascade-rerun.md
+     ============================================================ -->
+<section class="card" style="border-top: 3px solid #16a34a;">
+  <h2 style="color:#15803d;">&#x2705; Cascade Rerun &mdash; 2026-06-08</h2>
+  <p class="summary-text" style="margin-top:0;">
+    Targeted defect-verified rerun. Scope: the 4 TCs tied to the 3 defects confirmed fixed (SNOPS-91, SNOPS-124, SNOPS-125). All 4 pass &mdash; cascade confirmed. Entity: <strong>QA Testing</strong> · Tester: <strong>richardtest</strong> (Richard Losande, Admin).
+  </p>
+
+  <div class="summary-grid">
+    <div class="stat-tile pass"><div class="label">PASS</div><div class="value">4</div></div>
+    <div class="stat-tile fail"><div class="label">FAIL</div><div class="value">0</div></div>
+    <div class="stat-tile blocked"><div class="label">New Defects</div><div class="value">0</div></div>
+    <div class="stat-tile"><div class="label">Rerun Date</div><div class="value">2026-06-08</div></div>
+  </div>
+
+  <h3 style="margin-top:18px;font-size:15px;">Delta vs 2026-06-06 &mdash; PASS +4 &middot; FAIL &minus;4</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>TC</th>
+        <th>Tied Defect</th>
+        <th>2026-06-06 Status</th>
+        <th>2026-06-08 Status</th>
+        <th>Key Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>TC-023</td>
+        <td><span class="defect-key">SNOPS-91</span> &mdash; Bulk Send modal &ldquo;72 hours&rdquo; TTL copy</td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Modal body confirms &ldquo;They have <strong>72 hours</strong> to set their password.&rdquo;</td>
+      </tr>
+      <tr>
+        <td>TC-011</td>
+        <td><span class="defect-key">SNOPS-124</span> &mdash; invite_expired kebab &ldquo;Send invite&rdquo;</td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Kebab for Suchada Boonsong (invite_expired) shows &ldquo;Send invite&rdquo; (not &ldquo;Resend invite&rdquo;)</td>
+      </tr>
+      <tr>
+        <td>TC-029</td>
+        <td><span class="defect-key">SNOPS-124</span> &mdash; invite_expired kebab &ldquo;Send invite&rdquo;</td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Single-row kebab path (k=1) confirmed via same evidence as TC-011</td>
+      </tr>
+      <tr>
+        <td>TC-021</td>
+        <td><span class="defect-key">SNOPS-125</span> &mdash; Invite wizard Manager searchable picker</td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Step 3 Manager field: typing &ldquo;R&rdquo; returns suggestions; picker fully searchable</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;font-size:15px;">Defects</h3>
+  <p class="summary-text" style="border-left:3px solid #16a34a;padding-left:12px;background:#f0fdf4;">
+    <strong>No new defects.</strong> All 3 targeted defects (SNOPS-91, SNOPS-124, SNOPS-125) confirmed resolved. Cascade of the 3 fixed defects fully verified.
+  </p>
+
+  <h3 style="margin-top:18px;font-size:15px;">Evidence Notes</h3>
+  <ul class="summary-text" style="padding-left:22px;">
+    <li><strong>TC-023 / SNOPS-91:</strong> Triggered bulk send via &ldquo;Resend invites&rdquo; banner button (1 invite_expired row: Suchada Boonsong). Modal body reads &ldquo;They have 72 hours to set their password.&rdquo; Soft warning also present for missing onboarding fields. Cancelled without sending.</li>
+    <li><strong>TC-011 &amp; TC-029 / SNOPS-124:</strong> Kebab for Suchada Boonsong (invite_expired) shows: Quick view, Open full profile, <strong>Send invite</strong>, Cancel invite, View attendance, View leave, Edit profile, Deactivate. &ldquo;Send invite&rdquo; (not &ldquo;Resend invite&rdquo;) &mdash; correct per spec.</li>
+    <li><strong>TC-021 / SNOPS-125:</strong> Invite wizard Step 3 &mdash; Manager field placeholder &ldquo;Search employees by name&hellip;&rdquo;. Typing &ldquo;R&rdquo; surfaces: Suchada Boonsong, Kristina Dela Cruz, Krit Thanakit, Patcharee Wongchai, Richard Losande, Somchai Wongsawat. Picker is fully searchable.</li>
+  </ul>
+
+  <p class="summary-text" style="margin-top:14px;font-size:13px;color:#5b6470;font-style:italic;">
+    Source: <code>docs/qa/test-cases/SN-66/results/2026-06-08_cascade-rerun.md</code> &middot;
+    Admin: richardtest (Richard Losande) &middot; Entity: QA Testing &middot;
+    Screenshots prefix: <code>CASCADE-0608-sn66-*</code>
+  </p>
+</section>
+
 </main>
 
 <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightbox-img" alt=""></div>

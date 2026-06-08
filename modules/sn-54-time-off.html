@@ -97,6 +97,48 @@
   </p>
 </section>
 
+<section class="card" style="border-left:5px solid #0369a1;">
+  <h2 style="color:#0369a1;">2026-06-08 Cascade Rerun</h2>
+  <p class="summary-text">
+    Targeted rerun against verified-fixed defects <strong>SNOPS-131</strong> and <strong>SNOPS-141</strong>.
+    Env: <strong>qa · Test TH Regional</strong>. Accounts: <code>gelosprout2@gmail.com</code> (Gelo Manager) + <code>gelosprout3@gmail.com</code> (Gelo Employee3). Time: 06:41–06:47 UTC+8.
+    <br><br>
+    <strong>Delta: PASS +2 · BLOCKED −2.</strong>
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Defect</th>
+        <th>Title</th>
+        <th>Prior Status</th>
+        <th>New Status</th>
+        <th>Key Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SNOPS-131</strong></td>
+        <td>Manager sees "sample" leave type in File-a-request dialog</td>
+        <td><span class="badge blocked">BLOCKED</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Leave type visible + form opens; Available 10 days.</td>
+      </tr>
+      <tr>
+        <td><strong>SNOPS-141</strong></td>
+        <td>Employee balances seeded → can file leave end-to-end</td>
+        <td><span class="badge blocked">BLOCKED</span></td>
+        <td><span class="badge pass">PASS</span></td>
+        <td>Filed <code>SN-REQ-2026-00423</code> (sample, Jun 10 2026, 1 day, Pending). Annual 12/15, Sick 28/30, Personal 1.2/2.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="summary-text" style="margin-top:14px;">
+    <strong>No new defects.</strong>
+    <br>
+    <strong>Cleanup note:</strong> Test leave request <code>SN-REQ-2026-00423</code> (sample, Jun 10 2026, gelosprout3@gmail.com) is still <strong>Pending</strong> — cancellation was attempted via UI but did not take effect. Manual cancel/reject by a manager or admin is required.
+  </p>
+</section>
+
 <section class="card">
   <h2>Executive Summary</h2>
   <div class="summary-grid">
